@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-if [[ -z "${DATABASE_HOST}" ]]; then
+if [ -z "${DATABASE_HOST}" ]; then
     echo "must set DATABASE_HOST"
     exit 1
 fi
