@@ -1,0 +1,24 @@
+version: "3.3"
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: db
+      # MYSQL_USER: root
+      # MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - 3306:3306
+  floor-api:
+    image: sralloza/floor-api:stable
+    environment:
+      PORT: 80
+      JWT_SECRET: sadfjsldafksjfl
+      JWT_ALGO: HS256
+      LOG_LEVEL: silly
+      DATABASE_HOST: db
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: password
+    ports:
+      - 80:80
