@@ -1,6 +1,7 @@
 import { Router } from "express";
 import redoc from "redoc-express";
 import swaggerJsdoc from "swagger-jsdoc";
+import reqs from "../../../package.json"
 
 const route = Router();
 const options = {
@@ -8,7 +9,7 @@ const options = {
     openapi: "3.0.2",
     info: {
       title: "Floor API documentation",
-      version: "0.1.0",
+      version: reqs.version,
     },
   },
   apis: ["./src/api/routes/*.ts"],
@@ -73,6 +74,31 @@ export default (app: Router) => {
     "/docs",
     redoc({ title: "Floor API documentation", specUrl: "/openapi.json" })
   );
+
+  /**
+   *  @openapi
+   *  /version:
+   *    get:
+   *      description: Server version
+   *      summary: Server version
+   *      operationId: get_version
+   *      tags:
+   *      - Utils
+   *      responses:
+   *        200:
+   *          description: Server version
+   *          content:
+   *            application/json:
+   *              schema:
+   *                required:
+   *                -  version
+   *                properties:
+   *                  version:
+   *                    type: string
+   */
+  route.get("/version", (req, res) => {
+    res.status(200).json({version: reqs.version});
+  });
 
   /**
    *  @openapi
