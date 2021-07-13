@@ -59,8 +59,6 @@ export default ({ app }: { app: express.Application }) => {
       return next(err);
     }
 
-    console.log(err);
-
     const errors = [];
     for (const [loc, joiError] of err.details.entries()) {
       if (joiError.details.length > 1) {
