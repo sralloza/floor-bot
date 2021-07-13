@@ -7,10 +7,11 @@ import Logger from "./logger";
 
 export default async ({ expressApp }: { expressApp: Application }) => {
   expressApp.use(morgan("combined"));
+  Logger.info("Morgan loaded")
 
   await dependencyInjector();
-  Logger.info("✌️ Dependency Injector loaded");
+  Logger.info("Dependency Injector loaded");
 
   expressLoader({ app: expressApp });
-  Logger.info("✌️ Express loaded");
+  Logger.info("Express loaded");
 };

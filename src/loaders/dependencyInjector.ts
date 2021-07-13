@@ -7,13 +7,13 @@ import LoggerInstance from "./logger";
 export default async () => {
   try {
     Container.set("logger", LoggerInstance);
-    LoggerInstance.info("✌️ Logger injected into container");
+    LoggerInstance.info("Logger injected into container");
 
     Container.set("userModel", User);
-    LoggerInstance.info("✌️ userModel injected into container");
+    LoggerInstance.info("userModel injected into container");
 
     Container.set("Connection", await createConnection());
-    LoggerInstance.info("✌️ Connection injected into container");
+    LoggerInstance.info("Connection injected into container");
 
     cronScheduler()
     LoggerInstance.info("Cron Scheduler loaded")
@@ -22,4 +22,3 @@ export default async () => {
     throw e;
   }
 };
-
