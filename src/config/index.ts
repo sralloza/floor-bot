@@ -26,7 +26,7 @@ const settings = {
 
   // TODO: unnest (apiPrefix or versionPrefix)
   api: {
-    prefix: "/",
+    prefix: "/api",
   },
 
   orm: ormsettings,

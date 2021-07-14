@@ -1,7 +1,8 @@
 import { Router } from "express";
 import redoc from "redoc-express";
 import swaggerJsdoc from "swagger-jsdoc";
-import reqs from "../../../package.json"
+import reqs from "../../../package.json";
+import settings from "../../config";
 
 const route = Router();
 const options = {
@@ -11,6 +12,7 @@ const options = {
       title: "Floor API documentation",
       version: reqs.version,
     },
+    servers: [{ url: "https://floor.sralloza.es/api" }],
   },
   apis: ["./src/api/routes/*.ts"],
 };
@@ -72,7 +74,10 @@ export default (app: Router) => {
 
   route.get(
     "/docs",
-    redoc({ title: "Floor API documentation", specUrl: "/openapi.json" })
+    redoc({
+      title: "Floor API documentation",
+      specUrl: settings.api.prefix + "/openapi.json",
+    })
   );
 
   /**
@@ -97,7 +102,7 @@ export default (app: Router) => {
    *                    type: string
    */
   route.get("/version", (req, res) => {
-    res.status(200).json({version: reqs.version});
+    res.status(200).json({ version: reqs.version });
   });
 
   /**
@@ -114,9 +119,8 @@ export default (app: Router) => {
    *          description: Server OK
    */
   route.get("/status", (req, res) => {
-    res.status(200).json({detail: "Server OK"});
+    res.status(200).json({ detail: "Server OK" });
   });
-
 
   /**
    *  @openapi
@@ -132,6 +136,6 @@ export default (app: Router) => {
    *          description: Server OK
    */
   route.head("/status", (req, res) => {
-    res.status(200).json({detail: "Server OK"});
+    res.status(200).json({ detail: "Server OK" });
   });
 };

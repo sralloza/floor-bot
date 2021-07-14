@@ -18,11 +18,11 @@ module.exports = {
   database: "test2",
   synchronize: true,
   logging: false,
-  entities: ["build/models/**/*.js"],
+  entities: ["build/src/models/**/*.js"],
   migrations: ["src/migrations/**/*.js"],
   subscribers: ["src/subscribers/**/*.js"],
   cli: {
-    entitiesDir: "build/models",
+    entitiesDir: "build/src/models",
     migrationsDir: "src/migrations",
     subscribersDir: "src/subscribers",
   },
