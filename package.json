@@ -5,6 +5,7 @@
    "main": "./build/src/app.js",
    "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
+      "prestart": "rimraf build/",
       "start": "tsc && node ."
    },
    "keywords": [],
@@ -23,6 +24,7 @@
       "node-schedule": "^2.0.0",
       "redoc-express": "^1.0.0",
       "reflect-metadata": "^0.1.13",
+      "rimraf": "^3.0.2",
       "swagger-jsdoc": "^6.1.0",
       "ts-node": "3.3.0",
       "typedi": "^0.10.0",
