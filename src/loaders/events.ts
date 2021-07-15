@@ -12,6 +12,7 @@ const shutDown = () => {
   logger.info("Closing database connection...");
   connection.close();
   logger.info("✂️ Database connection closed");
+  process.exit();
 };
 
 process.on("SIGTERM", shutDown);
