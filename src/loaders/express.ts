@@ -14,27 +14,16 @@ export default ({ app }: { app: express.Application }) => {
   // It shows the real origin IP in the heroku or Cloudwatch logs
   app.enable("trust proxy");
 
-  // The magic package that prevents frontend developers going nuts
-  // Alternate description:
-  // Enable Cross Origin Resource Sharing to all origins by default
   app.use(cors());
 
-  // Some sauce that always add since 2014
-  // "Lets you use HTTP verbs such as PUT or DELETE in places where the client doesn't support it."
-  // Maybe not needed anymore ?
-  //   app.use(require("method-override")());
-
-  // Middleware that transforms the raw string of req.body into json
   app.use(express.json());
-  // Load API routes
+
   app.use(config.api.prefix, routes());
 
-  /// catch 404 and forward to error handler
   app.use((req, res, next) => {
     res.status(404).json({ detail: "Not Found" });
   });
 
-  /// error handlers
   app.use(
     (
       err: HTTPException | UnauthorizedError,
