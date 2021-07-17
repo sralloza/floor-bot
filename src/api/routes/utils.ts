@@ -12,9 +12,9 @@ const options = {
       title: "Floor API documentation",
       version: reqs.version,
     },
-    servers: [{ url: "https://floor.sralloza.es/api" }],
+    // servers: [{ url: "https://floor-api.sralloza.es" }],
   },
-  apis: ["./src/api/routes/*.ts"],
+  apis: ["./src/api/routes/**/*.ts"],
 };
 
 const openapiSpecification = swaggerJsdoc(options);
@@ -68,7 +68,13 @@ const openapiSpecification = swaggerJsdoc(options);
 export default (app: Router) => {
   app.use("/", route);
 
-  route.get("/openapi.json", (req, res) => {
+  const jsonName = "openapi.json";
+  const openapiJsonFullRoute =
+    settings.api_prefix == "/"
+      ? jsonName
+      : settings.api_prefix + "/" + jsonName;
+
+  route.get("/" + jsonName, (req, res) => {
     res.send(openapiSpecification).end();
   });
 
@@ -76,7 +82,7 @@ export default (app: Router) => {
     "/docs",
     redoc({
       title: "Floor API documentation",
-      specUrl: settings.api_prefix + "/openapi.json",
+      specUrl: openapiJsonFullRoute,
     })
   );
 
@@ -119,23 +125,6 @@ export default (app: Router) => {
    *          description: Server OK
    */
   route.get("/status", (req, res) => {
-    res.status(200).json({ detail: "Server OK" });
-  });
-
-  /**
-   *  @openapi
-   *  /status:
-   *    head:
-   *      description: Server status
-   *      summary: Server status
-   *      operationId: head_status
-   *      tags:
-   *      - Utils
-   *      responses:
-   *        200:
-   *          description: Server OK
-   */
-  route.head("/status", (req, res) => {
     res.status(200).json({ detail: "Server OK" });
   });
 };
