@@ -1,5 +1,4 @@
 import { Container } from "typedi";
-import { User } from "../models/user";
 import cronScheduler from "./cronScheduler";
 import LoggerInstance from "./logger";
 
@@ -7,9 +6,6 @@ export default async () => {
   try {
     Container.set("logger", LoggerInstance);
     LoggerInstance.info("Logger injected into container");
-
-    Container.set("userModel", User);
-    LoggerInstance.info("userModel injected into container");
 
     cronScheduler()
     LoggerInstance.info("Cron Scheduler loaded")

@@ -1,8 +1,6 @@
 import { celebrate } from "celebrate";
 import { NextFunction, Request, Response, Router } from "express";
-import { Container } from "typedi";
 import { loginSchema } from "../../schemas/auth";
-import GoogleAuthService from "../../services/googleAuth";
 import middlewares from "../middlewares";
 
 const route = Router();
@@ -72,10 +70,7 @@ export default (app: Router) => {
     "/login",
     celebrate(loginSchema()),
     async (req: Request, res: Response, next: NextFunction) => {
-      const { googleToken } = req.body;
-      const GoogleAuthServiceInstance = Container.get(GoogleAuthService);
-      const {token, user} = await GoogleAuthServiceInstance.login(googleToken);
-      return res.json({token, user}).status(200);
+      return res.json({}).status(200);
     }
   );
 

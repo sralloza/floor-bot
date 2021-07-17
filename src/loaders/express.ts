@@ -18,7 +18,7 @@ export default ({ app }: { app: express.Application }) => {
 
   app.use(express.json());
 
-  app.use(config.api.prefix, routes());
+  app.use(config.api_prefix, routes());
 
   app.use((req, res, next) => {
     res.status(404).json({ detail: "Not Found" });

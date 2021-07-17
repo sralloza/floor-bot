@@ -76,7 +76,7 @@ export default (app: Router) => {
     "/docs",
     redoc({
       title: "Floor API documentation",
-      specUrl: settings.api.prefix + "/openapi.json",
+      specUrl: settings.api_prefix + "/openapi.json",
     })
   );
 

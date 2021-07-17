@@ -1,4 +1,4 @@
-import { Request } from "express";
+import { NextFunction, Request, Response } from "express";
 import jwt from "express-jwt";
 import config from "../../config";
 
@@ -14,11 +14,14 @@ const getTokenFromHeader = (req: Request) => {
   return null;
 };
 
-const isAuth = jwt({
-  secret: config.jwtSecret,
-  algorithms: [config.jwtAlgorithm],
-  userProperty: "token",
-  getToken: getTokenFromHeader,
-});
+const isAuth = (req: Request, res: Response, next: NextFunction) => {
+  const token = req.headers["X-Token"];
+  if (!token) {
+    return res.status(401).json({ detail: "Not Authenticated" });
+  }
+  console.log({ token });
+  // TODO: check token
+  next();
+};
 
 export default isAuth;
