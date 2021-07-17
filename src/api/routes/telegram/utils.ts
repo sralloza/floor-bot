@@ -4,7 +4,7 @@ const route = Router();
 
 
 export default (app: Router) => {
-  app.use("/", route);
+  app.use("/telegram", route);
 
 
   /**

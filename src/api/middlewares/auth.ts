@@ -1,6 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "express-jwt";
-import config from "../../config";
 
 const getTokenFromHeader = (req: Request) => {
   if (

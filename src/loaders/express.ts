@@ -1,8 +1,6 @@
 import { isCelebrateError } from "celebrate";
 import cors from "cors";
-import EscapeHtml from "escape-html";
 import express, { NextFunction, Request, Response } from "express";
-import { UnauthorizedError } from "express-jwt";
 import Container from "typedi";
 import { Logger } from "winston";
 import routes from "../api";
@@ -25,16 +23,7 @@ export default ({ app }: { app: express.Application }) => {
   });
 
   app.use(
-    (
-      err: HTTPException | UnauthorizedError,
-      req: Request,
-      res: Response,
-      next: NextFunction
-    ) => {
-      if (err.name === "UnauthorizedError") {
-        return res.status(err.status).send({ detail: err.message }).end();
-      }
-
+    (err: HTTPException, req: Request, res: Response, next: NextFunction) => {
       if (err instanceof HTTPException) {
         return res.status(err.status).json({ detail: err.message }).end();
       }
