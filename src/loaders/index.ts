@@ -6,6 +6,7 @@ import dependencyInjector from "./dependencyInjector";
 import "./events";
 import expressLoader from "./express";
 import Logger from "./logger";
+import spreadsheetsLoader from "./spreadsheets";
 
 export default async ({ app, bot }: { app: Application; bot: Telegraf }) => {
   app.use(morgan("combined"));
@@ -16,6 +17,9 @@ export default async ({ app, bot }: { app: Application; bot: Telegraf }) => {
 
   botLoader(bot);
   Logger.info("Telegram Bot loaded");
+
+  await spreadsheetsLoader();
+  Logger.info("Spreadsheets loaded")
 
   expressLoader({ app: app });
   Logger.info("Express loaded");
