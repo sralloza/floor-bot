@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 import { warn } from "winston";
-import ormsettings from "../../ormconfig";
 
 // Set the NODE_ENV to 'development' by default
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
@@ -14,24 +13,9 @@ if (envFound.error) {
 
 const settings = {
   port: parseInt(process.env.PORT || "80", 10),
-
-  // TODO: rename to serverSecret
-  jwtSecret: process.env.JWT_SECRET || "",
-  jwtAlgorithm: process.env.JWT_ALGO || "",
-
-  // TODO: unnest?
-  logs: {
-    level: process.env.LOG_LEVEL || "silly",
-  },
-
-  // TODO: unnest (apiPrefix or versionPrefix)
-  api: {
-    prefix: "/api",
-  },
-
-  orm: ormsettings,
-
-  google_client_id: process.env.GOOGLE_CLIENT_ID as string,
+  logs_level: process.env.LOG_LEVEL || "silly",
+  api_prefix: "/",
+  telegram_token_bot: process.env.TELEGRAM_TOKEN_BOT
 };
 
 export default settings;

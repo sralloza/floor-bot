@@ -4,7 +4,7 @@ import swaggerJsdoc from "swagger-jsdoc";
 import reqs from "../../../package.json";
 import settings from "../../config";
 
-const route = Router();
+const router = Router();
 const options = {
   definition: {
     openapi: "3.0.2",
@@ -12,9 +12,9 @@ const options = {
       title: "Floor API documentation",
       version: reqs.version,
     },
-    servers: [{ url: "https://floor.sralloza.es/api" }],
+    // servers: [{ url: "https://floor-api.sralloza.es" }],
   },
-  apis: ["./src/api/routes/*.ts"],
+  apis: ["./src/api/routes/**/*.ts"],
 };
 
 const openapiSpecification = swaggerJsdoc(options);
@@ -66,17 +66,23 @@ const openapiSpecification = swaggerJsdoc(options);
  */
 
 export default (app: Router) => {
-  app.use("/", route);
+  app.use("/", router);
 
-  route.get("/openapi.json", (req, res) => {
+  const jsonName = "openapi.json";
+  const openapiJsonFullRoute =
+    settings.api_prefix == "/"
+      ? jsonName
+      : settings.api_prefix + "/" + jsonName;
+
+  router.get("/" + jsonName, (req, res) => {
     res.send(openapiSpecification).end();
   });
 
-  route.get(
+  router.get(
     "/docs",
     redoc({
       title: "Floor API documentation",
-      specUrl: settings.api.prefix + "/openapi.json",
+      specUrl: openapiJsonFullRoute,
     })
   );
 
@@ -101,7 +107,7 @@ export default (app: Router) => {
    *                  version:
    *                    type: string
    */
-  route.get("/version", (req, res) => {
+  router.get("/version", (req, res) => {
     res.status(200).json({ version: reqs.version });
   });
 
@@ -118,24 +124,7 @@ export default (app: Router) => {
    *        200:
    *          description: Server OK
    */
-  route.get("/status", (req, res) => {
-    res.status(200).json({ detail: "Server OK" });
-  });
-
-  /**
-   *  @openapi
-   *  /status:
-   *    head:
-   *      description: Server status
-   *      summary: Server status
-   *      operationId: head_status
-   *      tags:
-   *      - Utils
-   *      responses:
-   *        200:
-   *          description: Server OK
-   */
-  route.head("/status", (req, res) => {
+  router.get("/status", (req, res) => {
     res.status(200).json({ detail: "Server OK" });
   });
 };
