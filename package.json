@@ -28,7 +28,6 @@
       "swagger-jsdoc": "^6.1.0",
       "ts-node": "3.3.0",
       "typedi": "^0.10.0",
-      "typeorm": "0.2.34",
       "typescript": "3.3.3333",
       "winston": "^3.3.3"
    },

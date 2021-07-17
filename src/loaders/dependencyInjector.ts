@@ -1,5 +1,4 @@
 import { Container } from "typedi";
-import { createConnection } from "typeorm";
 import { User } from "../models/user";
 import cronScheduler from "./cronScheduler";
 import LoggerInstance from "./logger";
@@ -11,9 +10,6 @@ export default async () => {
 
     Container.set("userModel", User);
     LoggerInstance.info("userModel injected into container");
-
-    Container.set("Connection", await createConnection());
-    LoggerInstance.info("Connection injected into container");
 
     cronScheduler()
     LoggerInstance.info("Cron Scheduler loaded")
