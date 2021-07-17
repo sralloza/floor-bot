@@ -1,7 +1,24 @@
-# Awesome Project Build with TypeORM
+# The Floor API
 
-Steps to run this project:
+## Deployment
 
-1. Run `npm i` command
-2. Setup database settings inside `ormconfig.json` file
-3. Run `npm start` command
+### Docker images
+
+Development:
+
+```bash
+docker build -t sralloza/floor-api:stable -f Dockerfile.amd .
+docker push -t sralloza/floor-api:stable
+```
+
+Production:
+
+```bash
+docker buildx build -t sralloza/floor-api:stable-arm --platform=linux/arm/v7 --push .
+```
+
+### Environment variables
+
+- `PORT`: the port where the API will be listening. Defaults to `80`.
+- `LOG_LEVEL`: winston's log level. Defaults to `silly`.
+- `TELEGRAM_TOKEN_BOT`: the telegram bot's token.
