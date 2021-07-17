@@ -12,7 +12,4 @@ export default (app: Router) => {
   const bot: Telegraf = Container.get("bot")
   router.use(bot.webhookCallback("/secret-url"));
 
-  router.post("/ping", (req, res) => {
-    res.json({ detail: "Working" });
-  });
 };

@@ -1,10 +1,10 @@
 import { Router } from "express";
 
-const route = Router();
+const router = Router();
 
 
 export default (app: Router) => {
-  app.use("/telegram", route);
+  app.use("/telegram", router);
 
 
   /**
@@ -20,7 +20,7 @@ export default (app: Router) => {
    *        200:
    *          description: Webhook is ready
    */
-  route.get("/status", (req, res) => {
+  router.get("/status", (req, res) => {
     res.status(200).json({ detail: "Webhook is ready" });
   });
 

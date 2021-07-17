@@ -4,7 +4,7 @@ import swaggerJsdoc from "swagger-jsdoc";
 import reqs from "../../../package.json";
 import settings from "../../config";
 
-const route = Router();
+const router = Router();
 const options = {
   definition: {
     openapi: "3.0.2",
@@ -66,7 +66,7 @@ const openapiSpecification = swaggerJsdoc(options);
  */
 
 export default (app: Router) => {
-  app.use("/", route);
+  app.use("/", router);
 
   const jsonName = "openapi.json";
   const openapiJsonFullRoute =
@@ -74,11 +74,11 @@ export default (app: Router) => {
       ? jsonName
       : settings.api_prefix + "/" + jsonName;
 
-  route.get("/" + jsonName, (req, res) => {
+  router.get("/" + jsonName, (req, res) => {
     res.send(openapiSpecification).end();
   });
 
-  route.get(
+  router.get(
     "/docs",
     redoc({
       title: "Floor API documentation",
@@ -107,7 +107,7 @@ export default (app: Router) => {
    *                  version:
    *                    type: string
    */
-  route.get("/version", (req, res) => {
+  router.get("/version", (req, res) => {
     res.status(200).json({ version: reqs.version });
   });
 
@@ -124,7 +124,7 @@ export default (app: Router) => {
    *        200:
    *          description: Server OK
    */
-  route.get("/status", (req, res) => {
+  router.get("/status", (req, res) => {
     res.status(200).json({ detail: "Server OK" });
   });
 };
