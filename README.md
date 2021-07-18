@@ -24,3 +24,11 @@ docker buildx build -t sralloza/floor-api:stable-arm --platform=linux/arm/v7 --p
 - `TELEGRAM_TOKEN_BOT`: the telegram bot's token.
 - `GOOGLE_SERVICE_ACCOUNT_EMAIL`: the service account email to work with google spreadsheets.
 - `GOOGLE_PRIVATE_KEY`: the private key to work with google spreadsheets.
+
+## Telegram Bot
+
+### Commands
+
+help - muestra la ayuda
+users - lista los usuarios (inseguro, se quitará en un futuro muy cercano)
+register - registra tu ID

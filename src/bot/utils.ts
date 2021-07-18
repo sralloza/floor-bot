@@ -2,7 +2,7 @@ import { Telegraf } from "telegraf";
 import Container from "typedi";
 import GSUsersService, {
   TelegramIDAlreadySetError,
-  UserNotFoundError,
+  UserNotFoundError
 } from "../services/gsUsers";
 
 export default (bot: Telegraf) => {
@@ -12,8 +12,12 @@ export default (bot: Telegraf) => {
 
   bot.command("users", async (ctx) => {
     const service = Container.get(GSUsersService);
+    const currentUser = await service.getUserByTelegramID(ctx.update.message.chat.id);
+    console.log(currentUser)
+    if (!currentUser)
+      return ctx.reply("No tienes permiso para ver los usuarios.");
     const users = await service.getUsers();
-    ctx.reply(users.toString());
+    ctx.reply(JSON.stringify(users));
   });
 
   bot.command("register", async (ctx) => {

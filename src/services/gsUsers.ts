@@ -8,7 +8,7 @@ export class UserNotFoundError extends Error {}
 
 export interface RegisteredUser {
   name: string;
-  telegram_id?: number;
+  telegramID?: number;
 }
 
 @Service()
@@ -24,12 +24,21 @@ export default class GSUsersService {
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
     const users = rows.map(({ name, telegramID }) => {
-      return { name, telegramID };
+      return { name: String(name), telegramID: +telegramID };
     });
-    console.table(users);
-    console.log(users);
     return users;
   }
+
+  public async getUserByTelegramID(
+    telegramID: number
+  ): Promise<RegisteredUser | null> {
+    const users = await this.getUsers();
+    for (let user of users) {
+      if (user.telegramID == telegramID) return user;
+    }
+    return null;
+  }
+
   public async setUserTelegramID(userName: string, telegramID: number) {
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
