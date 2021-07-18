@@ -12,7 +12,9 @@ RUN apt update && \
 # Create app directory
 WORKDIR /usr/src/app
 
-RUN npm i -g tsc typeorm
+RUN npm install -g npm@latest
+
+RUN npm install -g typescript
 
 COPY package*.json ./
 
@@ -23,12 +25,14 @@ ENV NODE_ENV development
 
 RUN npm ci
 
-ENV NODE_ENV production
-
 COPY . .
 
 EXPOSE 80
 
 RUN tsc
+
+ENV NODE_ENV production
+
+RUN npm ci
 
 ENTRYPOINT [ "./entrypoint.sh"]

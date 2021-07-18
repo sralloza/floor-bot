@@ -6,7 +6,11 @@ RUN apt-get update \
     && wget --quiet https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -O /usr/sbin/wait-for-it.sh \
     && chmod +x /usr/sbin/wait-for-it.sh
 
-RUN npm i -g typeorm tsc
+WORKDIR /usr/src/app
+
+RUN npm install -g npm@latest
+
+RUN npm install -g typescript
 
 COPY package*.json ./
 
@@ -18,5 +22,9 @@ COPY . .
 EXPOSE 80
 
 RUN tsc
+
+ENV NODE_ENV production
+
+RUN npm ci
 
 ENTRYPOINT [ "./entrypoint.sh"]
