@@ -1,11 +1,8 @@
 import { Router } from "express";
 import redoc from "redoc-express";
 import swaggerJsdoc from "swagger-jsdoc";
-import Container from "typedi";
 import reqs from "../../../package.json";
 import settings from "../../config";
-import GSExchangeRate from "../../services/gsExchangeRate";
-import GSTicketsService from "../../services/gsTickets";
 
 const router = Router();
 const options = {
@@ -127,10 +124,7 @@ export default (app: Router) => {
    *        200:
    *          description: Server OK
    */
-  router.get("/status", async (req, res) => {
-    const service = Container.get(GSExchangeRate);
-    const r = await service.getRates();
-    console.log(r);
-    res.status(200).json({ detail: "Server OsK" });
+  router.get("/status", (req, res) => {
+    res.status(200).json({ detail: "Server OK" });
   });
 };
