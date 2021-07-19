@@ -14,6 +14,6 @@ export default class GSLogsService {
 
   public async logMessage(message: string) {
     const sheet = this.doc.sheetsByTitle["Logs"];
-    return await sheet.addRow([new Date().toLocaleString(), message]);
+    return await sheet.addRow([new Date().toJSON(), message]);
   }
 }
