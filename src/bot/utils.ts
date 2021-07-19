@@ -17,7 +17,8 @@ let HELP = `
 - /basura - el usuario indica que ha bajado la basura.
 `;
 
-const START = "Para empezar a usar el bot, lee el apartado de *Primeros pasos* del manual de uso";
+const START =
+  "Para empezar a usar el bot, lee el apartado de *Primeros pasos* del manual de uso";
 
 export default (bot: Telegraf) => {
   bot.command("start", (ctx) => {
@@ -30,20 +31,6 @@ export default (bot: Telegraf) => {
 
   bot.command("help", (ctx) => {
     ctx.replyWithMarkdown(HELP);
-  });
-
-  bot.command("test", COMING_SOON)
-
-  bot.command("users", async (ctx) => {
-    const service = Container.get(GSUsersService);
-    const currentUser = await service.getUserByTelegramID(
-      ctx.update.message.chat.id
-    );
-    console.log(currentUser);
-    if (!currentUser)
-      return ctx.reply("No tienes permiso para ver los usuarios.");
-    const users = await service.getUsers();
-    ctx.reply(JSON.stringify(users));
   });
 
   bot.on("text", (ctx) => {
