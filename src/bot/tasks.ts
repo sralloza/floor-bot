@@ -47,6 +47,4 @@ export default (bot: Telegraf) => {
     ctx.editMessageReplyMarkup({ inline_keyboard: [] });
     ctx.reply("Tarea completada con éxito");
   });
-
-  bot.command("reiniciar_tarea", COMING_SOON);
 };

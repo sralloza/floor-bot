@@ -170,24 +170,4 @@ export default class GSTasksService {
     this.setGreenBackground(cell);
     await sheet.saveUpdatedCells();
   }
-
-  public async resetTask(user: string): Promise<void> {
-    const sheet = this.doc.sheetsById[this.sheetID];
-    const rows = await sheet.getRows();
-
-    const rowIndex = rows.length;
-    let row = rows[rowIndex - 1];
-    await sheet.loadCells(row.a1Range.split("!")[1]);
-
-    const bathrooms = sheet.getCell(rowIndex, 1);
-    const livingRoom = sheet.getCell(rowIndex, 2);
-    const kitchen = sheet.getCell(rowIndex, 3);
-
-    if (bathrooms.value == user) this.setWhiteBackground(bathrooms);
-    else if (livingRoom.value == user) this.setWhiteBackground(livingRoom);
-    else if (kitchen.value == user) this.setWhiteBackground(kitchen);
-    else throw new Error("Invalid row (user not present)");
-
-    await sheet.saveUpdatedCells();
-  }
 }
