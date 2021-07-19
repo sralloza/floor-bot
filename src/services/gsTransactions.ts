@@ -3,7 +3,7 @@ import { Inject, Service } from "typedi";
 import { Logger } from "winston";
 import settings from "../config";
 
-interface Transaction {
+export interface Transaction {
   timestamp: Date;
   userFrom: string;
   userTo: string;
