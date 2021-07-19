@@ -1,6 +1,4 @@
 import { Telegraf } from "telegraf";
-import Container from "typedi";
-import GSUsersService from "../services/gsUsers";
 
 export const COMING_SOON = (ctx: any) => {
   ctx.replyWithMarkdown("*Próximamente...*");
@@ -10,10 +8,10 @@ let HELP = `
 - /ayuda - muestra este mensaje.
 - /help - muestra este mensaje.
 - /start - muestra unas instrucciones para empezar.
-- /registro USUARIO - registra al usuario.
-- /transferir USUARIO - pide a otro usuario una transferencia
-- /aceptar - acepta una transferencia.
-- /rechazar - rechaza una transferencia.
+- /registro - registra al usuario.
+- /completar_tarea - marcar tarea semanal como completada
+- /reiniciar_tarea - marcar tarea semanal como pendiente
+- /transferir - pide a otro usuario una transferencia
 - /basura - el usuario indica que ha bajado la basura.
 `;
 

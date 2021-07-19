@@ -6,6 +6,9 @@ import GSUsersService, {
   UserNotFoundError
 } from "../services/gsUsers";
 
+const ALREADY_REGISTER_MSG = `Ya te has registrado. No hace falta que te vuelvas a registrar.
+Si crees que es un error, contacta con el administrador.`;
+
 export default (bot: Telegraf) => {
   bot.command("registro", async (ctx) => {
     const service = Container.get(GSUsersService);
@@ -13,15 +16,13 @@ export default (bot: Telegraf) => {
     const canUserRegister = await service.canRegisterTelegramID(
       ctx.update.message.chat.id
     );
+
     if (canUserRegister === false) {
-      ctx.reply(
-        "Ya te has registrado. No hace falta que te vuelvas a registrar."
-      );
-      ctx.reply("Si crees que es un error, contacta con el administrador.");
+      ctx.reply(ALREADY_REGISTER_MSG);
       return;
     }
 
-    return ctx.reply("Select username to register:", {
+    return ctx.reply("Elige tu nombre de usuario", {
       parse_mode: "Markdown",
       ...Markup.inlineKeyboard([
         ...users
@@ -35,7 +36,7 @@ export default (bot: Telegraf) => {
       ]),
     });
   });
-  
+
   bot.action(/REGISTER_USERNAME-(.+)/, async (ctx) => {
     const username = ctx.match[1];
     const telegramID = ctx.callbackQuery.from.id;
@@ -46,11 +47,7 @@ export default (bot: Telegraf) => {
     } catch (error) {
       await ctx.answerCbQuery();
       if (error instanceof TelegramIDAlreadySetError) {
-        ctx.editMessageText(
-          "Ya te has registrado. No hace falta que te vuelvas a registrar."
-        );
-        ctx.reply("Si crees que es un error, contacta con el administrador");
-        return;
+        return ctx.editMessageText(ALREADY_REGISTER_MSG);
       }
       if (error instanceof UserNotFoundError) {
         return ctx.editMessageText(

@@ -21,6 +21,14 @@ async function startServer() {
       Logger.error(err);
       process.exit(1);
     });
+
+  if (process.env.NODE_ENV === "development") {
+    bot.launch();
+
+    // Enable graceful stop
+    process.once("SIGINT", () => bot.stop("SIGINT"));
+    process.once("SIGTERM", () => bot.stop("SIGTERM"));
+  }
 }
 
 startServer();
