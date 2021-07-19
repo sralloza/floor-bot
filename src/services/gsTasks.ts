@@ -56,7 +56,6 @@ export default class GSTasksService {
 
   public async createAssignedTask(assignedTask: AssignedTask) {
     const sheet = this.doc.sheetsById[this.sheetID];
-    console.log(sheet);
     const newRow: DBInput = {
       semana: assignedTask.week,
       baños: assignedTask.bathrooms,
