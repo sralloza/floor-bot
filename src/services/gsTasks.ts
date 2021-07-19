@@ -21,6 +21,13 @@ interface AdvancedAssignedTask {
   kitchen: AdvancedSingleTask;
 }
 
+interface DBInput {
+  semana: number;
+  baños: string;
+  salón: string;
+  cocina: string;
+}
+
 @Service()
 export default class GSTasksService {
   validTasksSheetID = 27379859;
@@ -46,22 +53,16 @@ export default class GSTasksService {
     cell.backgroundColor = { red: 1, green: 1, blue: 1, alpha: 1 };
   }
 
-  public async getValidTasks() {
-    const sheet = this.doc.sheetsById[this.validTasksSheetID];
-    const rows = await sheet.getRows();
-    const validTasks = rows.map((e) => e.taskName);
-    return validTasks;
-  }
-
   public async createAssignedTask(assignedTask: AssignedTask) {
     const sheet = this.doc.sheetsById[0];
     console.log(sheet);
-    await sheet.addRow({
+    const newRow: DBInput = {
       semana: assignedTask.week,
       baños: assignedTask.bathrooms,
       salón: assignedTask.livingRoom,
       cocina: assignedTask.kitchen,
-    });
+    };
+    await sheet.addRow(newRow as any);
   }
 
   public async getAssignedTasks(): Promise<AdvancedAssignedTask[]> {

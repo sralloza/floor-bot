@@ -7,6 +7,11 @@ interface userBalance {
   tickets: number;
 }
 
+interface DBInput {
+  usuario: string;
+  tickets: string;
+}
+
 @Service()
 export default class GSTicketsService {
   sheetID = 1204432402;
@@ -19,8 +24,9 @@ export default class GSTicketsService {
   public async getTickets(): Promise<userBalance[]> {
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
-    const balances: userBalance[] = rows.map(({ usuario, tickets }) => {
-      return { user: usuario, tickets: +tickets };
+    const balances: userBalance[] = rows.map((row) => {
+      const {usuario: user, tickets} = row as unknown as DBInput
+      return { user, tickets: +tickets };
     });
     return balances;
   }
@@ -59,14 +65,16 @@ export default class GSTicketsService {
 
     if (systemBalance.tickets <= -3) {
       const distribute = Math.floor(Math.abs(systemBalance.tickets) / 3);
-      this.logger.info(`Distributing ${distribute} tickets`)
+      this.logger.info(`Distributing ${distribute} tickets`);
       if (distribute === 0) {
-        this.logger.info(`No tickets to distribute (${JSON.stringify(systemBalance)})`)
-        return
-      };
+        this.logger.info(
+          `No tickets to distribute (${JSON.stringify(systemBalance)})`
+        );
+        return;
+      }
 
-      for (const balance of usersBalance){
-        await this.transferTickets("System", balance.user, -distribute)
+      for (const balance of usersBalance) {
+        await this.transferTickets("System", balance.user, -distribute);
       }
     }
   }

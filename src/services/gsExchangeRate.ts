@@ -7,6 +7,11 @@ interface exchangeRate {
   tickets: number;
 }
 
+interface DBInput {
+  concepto: string;
+  tickets: string;
+}
+
 @Service()
 export default class GSExchangeRate {
   sheetID = 1120508069;
@@ -19,8 +24,9 @@ export default class GSExchangeRate {
   public async getRates(): Promise<exchangeRate[]> {
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
-    const balances: exchangeRate[] = rows.map(({ concepto, tickets }) => {
-      return { concept: concepto, tickets: +tickets };
+    const balances: exchangeRate[] = rows.map((row) => {
+      const { concepto: concept, tickets } = row as unknown as DBInput;
+      return { concept, tickets: +tickets };
     });
     return balances;
   }

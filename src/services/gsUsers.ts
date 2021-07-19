@@ -11,6 +11,11 @@ export interface RegisteredUser {
   telegramID?: number;
 }
 
+interface DBInput {
+  nick: string;
+  telegramID: string;
+}
+
 @Service()
 export default class GSUsersService {
   sheetID = 2084291060;
@@ -23,8 +28,9 @@ export default class GSUsersService {
   public async getUsers(): Promise<RegisteredUser[]> {
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
-    const users = rows.map(({ nick, telegramID }) => {
-      return { username: String(nick), telegramID: +telegramID };
+    const users = rows.map((row) => {
+      const { nick: username, telegramID } = row as unknown as DBInput;
+      return { username, telegramID: +telegramID };
     });
     return users;
   }
