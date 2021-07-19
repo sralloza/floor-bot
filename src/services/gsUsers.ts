@@ -36,6 +36,12 @@ export default class GSUsersService {
     return users;
   }
 
+  public async getUserByIDorError(telegramID: number): Promise<RegisteredUser> {
+    const user = await this.getUserByTelegramID(telegramID);
+    if (user) return user;
+    throw new UserNotFoundError(telegramID.toString());
+  }
+
   public async getUserByTelegramID(
     telegramID: number
   ): Promise<RegisteredUser | null> {
@@ -57,14 +63,14 @@ export default class GSUsersService {
     return true;
   }
 
-  public async setUserTelegramID(userName: string, telegramID: number) {
+  public async setUserTelegramID(username: string, telegramID: number) {
     if ((await this.canRegisterTelegramID(telegramID)) === false)
       throw new TelegramIDAlreadySetError();
 
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
 
-    const users_rows = rows.filter((row) => row.nick == userName);
+    const users_rows = rows.filter((row) => row.nick == username);
     if (!users_rows.length) throw new UserNotFoundError();
 
     const user_row = users_rows[0];
