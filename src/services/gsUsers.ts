@@ -7,7 +7,7 @@ export class TelegramIDAlreadySetError extends Error {}
 export class UserNotFoundError extends Error {}
 
 export interface RegisteredUser {
-  name: string;
+  username: string;
   telegramID?: number;
 }
 
@@ -23,8 +23,8 @@ export default class GSUsersService {
   public async getUsers(): Promise<RegisteredUser[]> {
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
-    const users = rows.map(({ name, telegramID }) => {
-      return { name: String(name), telegramID: +telegramID };
+    const users = rows.map(({ nick, telegramID }) => {
+      return { username: String(nick), telegramID: +telegramID };
     });
     return users;
   }
@@ -43,7 +43,7 @@ export default class GSUsersService {
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
 
-    const users_rows = rows.filter((row) => row.name == userName);
+    const users_rows = rows.filter((row) => row.username == userName);
     if (!users_rows.length) throw new UserNotFoundError();
 
     const user_row = users_rows[0];

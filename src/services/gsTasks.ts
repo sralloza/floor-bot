@@ -57,10 +57,10 @@ export default class GSTasksService {
     const sheet = this.doc.sheetsById[0];
     console.log(sheet);
     await sheet.addRow({
-      Semana: assignedTask.week,
-      Baños: assignedTask.bathrooms,
-      Salón: assignedTask.livingRoom,
-      Cocina: assignedTask.kitchen,
+      semana: assignedTask.week,
+      baños: assignedTask.bathrooms,
+      salón: assignedTask.livingRoom,
+      cocina: assignedTask.kitchen,
     });
   }
 

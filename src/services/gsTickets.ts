@@ -19,8 +19,8 @@ export default class GSTicketsService {
   public async getTickets(): Promise<userBalance[]> {
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
-    const balances: userBalance[] = rows.map(({ user, tickets }) => {
-      return { user, tickets };
+    const balances: userBalance[] = rows.map(({ usuario, tickets }) => {
+      return { user: usuario, tickets: +tickets };
     });
     return balances;
   }
