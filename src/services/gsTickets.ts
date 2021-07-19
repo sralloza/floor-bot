@@ -9,7 +9,7 @@ interface userBalance {
 
 @Service()
 export default class GSTicketsService {
-  validTasksSheetID = 1204432402;
+  sheetID = 1204432402;
 
   constructor(
     @Inject("logger") private logger: Logger,
@@ -17,16 +17,16 @@ export default class GSTicketsService {
   ) {}
 
   public async getTickets(): Promise<userBalance[]> {
-    const sheet = this.doc.sheetsById[this.validTasksSheetID];
+    const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
-    const validTasks: userBalance[] = rows.map(({ user, tickets }) => {
+    const balances: userBalance[] = rows.map(({ user, tickets }) => {
       return { user, tickets };
     });
-    return validTasks;
+    return balances;
   }
 
   public async transferTickets(from: string, to: string, tickets: number) {
-    const sheet = this.doc.sheetsById[this.validTasksSheetID];
+    const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
 
     let validFrom = false;
@@ -40,16 +40,34 @@ export default class GSTicketsService {
         validFrom = true;
         const balanceCell = sheet.getCell(i + 1, 1);
         balanceCell.value = +balanceCell.value - tickets;
-      }
-      else if (user.value == to) {
+      } else if (user.value == to) {
         validTo = true;
         const balanceCell = sheet.getCell(i + 1, 1);
         balanceCell.value = +balanceCell.value + tickets;
       }
     }
-    if (!validFrom) throw new Error("From invalid")
-    if (!validTo) throw new Error("To invalid")
+    if (!validFrom) throw new Error("From invalid");
+    if (!validTo) throw new Error("To invalid");
 
-    await sheet.saveUpdatedCells()
+    await sheet.saveUpdatedCells();
+  }
+
+  public async balanceSystem() {
+    const balances = await this.getTickets();
+    const systemBalance = balances.filter((e) => e.user == "System")[0];
+    const usersBalance = balances.filter((e) => e.user !== "System");
+
+    if (systemBalance.tickets <= -3) {
+      const distribute = Math.floor(Math.abs(systemBalance.tickets) / 3);
+      this.logger.info(`Distributing ${distribute} tickets`)
+      if (distribute === 0) {
+        this.logger.info(`No tickets to distribute (${JSON.stringify(systemBalance)})`)
+        return
+      };
+
+      for (const balance of usersBalance){
+        await this.transferTickets("System", balance.user, -distribute)
+      }
+    }
   }
 }
