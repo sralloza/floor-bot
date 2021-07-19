@@ -1,6 +1,7 @@
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { Inject, Service } from "typedi";
 import { Logger } from "winston";
+import settings from "../config";
 
 interface exchangeRate {
   concept: string;
@@ -14,7 +15,7 @@ interface DBInput {
 
 @Service()
 export default class GSExchangeRate {
-  sheetID = 1120508069;
+  sheetID = settings.google_sheets_ids.exchangesRates;
 
   constructor(
     @Inject("logger") private logger: Logger,

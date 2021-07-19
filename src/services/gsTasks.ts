@@ -1,6 +1,7 @@
 import { GoogleSpreadsheet, GoogleSpreadsheetCell } from "google-spreadsheet";
 import { Inject, Service } from "typedi";
 import { Logger } from "winston";
+import settings from "../config";
 
 interface AssignedTask {
   week: number;
@@ -30,7 +31,7 @@ interface DBInput {
 
 @Service()
 export default class GSTasksService {
-  validTasksSheetID = 27379859;
+  sheetID = settings.google_sheets_ids.tasks;
 
   constructor(
     @Inject("logger") private logger: Logger,
@@ -54,7 +55,7 @@ export default class GSTasksService {
   }
 
   public async createAssignedTask(assignedTask: AssignedTask) {
-    const sheet = this.doc.sheetsById[0];
+    const sheet = this.doc.sheetsById[this.sheetID];
     console.log(sheet);
     const newRow: DBInput = {
       semana: assignedTask.week,
@@ -66,7 +67,7 @@ export default class GSTasksService {
   }
 
   public async getAssignedTasks(): Promise<AdvancedAssignedTask[]> {
-    const sheet = this.doc.sheetsById[0];
+    const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
     const data: AdvancedAssignedTask[] = [];
 
@@ -89,7 +90,7 @@ export default class GSTasksService {
   }
 
   public async finishTask(user: string): Promise<void> {
-    const sheet = this.doc.sheetsById[0];
+    const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
 
     const rowIndex = rows.length;
@@ -109,7 +110,7 @@ export default class GSTasksService {
   }
 
   public async resetTask(user: string): Promise<void> {
-    const sheet = this.doc.sheetsById[0];
+    const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
 
     const rowIndex = rows.length;

@@ -1,6 +1,7 @@
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { Inject, Service } from "typedi";
 import { Logger } from "winston";
+import settings from "../config";
 
 interface userBalance {
   user: string;
@@ -14,7 +15,7 @@ interface DBInput {
 
 @Service()
 export default class GSTicketsService {
-  sheetID = 1204432402;
+  sheetID = settings.google_sheets_ids.tickets;
 
   constructor(
     @Inject("logger") private logger: Logger,
