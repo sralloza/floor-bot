@@ -46,11 +46,25 @@ export default class GSUsersService {
     return null;
   }
 
-  public async setUserTelegramID(userName: string, telegramID: number) {
+  public async canRegisterTelegramID(telegramID: number): Promise<boolean> {
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
 
-    const users_rows = rows.filter((row) => row.username == userName);
+    if (rows.filter((row) => row.telegramID == telegramID).length > 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public async setUserTelegramID(userName: string, telegramID: number) {
+    if ((await this.canRegisterTelegramID(telegramID)) === false)
+      throw new TelegramIDAlreadySetError();
+
+    const sheet = this.doc.sheetsById[this.sheetID];
+    const rows = await sheet.getRows();
+
+    const users_rows = rows.filter((row) => row.nick == userName);
     if (!users_rows.length) throw new UserNotFoundError();
 
     const user_row = users_rows[0];
