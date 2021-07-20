@@ -10,5 +10,5 @@ export default async () => {
 
   const bot = new Telegraf(token);
 
-  await require("../loaders").default({ app, bot, silenced: true });
+  await require("../loaders").default({ app, bot, cronLoading: true });
 };
