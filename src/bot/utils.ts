@@ -9,8 +9,7 @@ let HELP = `
 - /help - muestra este mensaje.
 - /start - muestra unas instrucciones para empezar.
 - /registro - registra al usuario.
-- /completar_tarea - marcar tarea semanal como completada
-- /reiniciar_tarea - marcar tarea semanal como pendiente
+- /completar_tarea - marcar tarea semanal como completada
 - /transferir - pide a otro usuario una transferencia
 - /basura - el usuario indica que ha bajado la basura.
 `;
