@@ -3,8 +3,9 @@ import Container from "typedi";
 import { Logger } from "winston";
 import GSUsersService, {
   TelegramIDAlreadySetError,
-  UserNotFoundError
+  UserNotFoundError,
 } from "../services/gsUsers";
+import { CANCEL_OPTION } from "./utils";
 
 const ALREADY_REGISTER_MSG = `Ya te has registrado. No hace falta que te vuelvas a registrar.
 Si crees que es un error, contacta con el administrador.`;
@@ -22,9 +23,8 @@ export default (bot: Telegraf) => {
       return;
     }
 
-    return ctx.reply("Elige tu nombre de usuario", {
-      parse_mode: "Markdown",
-      ...Markup.inlineKeyboard([
+    const keyboardOptions = [
+      [
         ...users
           .filter((x) => !x.telegramID)
           .map((x) =>
@@ -33,7 +33,12 @@ export default (bot: Telegraf) => {
               `REGISTER_USERNAME-${x.username}`
             )
           ),
-      ]),
+      ],
+    ];
+    keyboardOptions.push(CANCEL_OPTION);
+
+    return ctx.reply("Elige tu nombre de usuario", {
+      ...Markup.inlineKeyboard(keyboardOptions),
     });
   });
 

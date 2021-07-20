@@ -2,7 +2,7 @@ import { Markup, Telegraf } from "telegraf";
 import Container from "typedi";
 import GSTasksService, { TaskType } from "../services/gsTasks";
 import GSUsersService from "../services/gsUsers";
-import { COMING_SOON } from "./utils";
+import { CANCEL_OPTION } from "./utils";
 
 export default (bot: Telegraf) => {
   bot.command("completar_tarea", async (ctx) => {
@@ -13,18 +13,20 @@ export default (bot: Telegraf) => {
     );
     const tasks = await tasksService.getUserActiveAssignedTasks(user.username);
 
+    const keyboardOptions = [
+      ...tasks.map((x) => [
+        Markup.button.callback(
+          `${x.taskName} [S. ${x.week}]`,
+          `COMPLETE-[${x.week}-${x.taskType}]`
+        ),
+      ]),
+    ];
+    keyboardOptions.push(CANCEL_OPTION);
+
     if (!tasks.length) return ctx.reply("No tienes ninguna tarea activa");
 
     return ctx.reply("Elige la tarea a completar", {
-      parse_mode: "Markdown",
-      ...Markup.inlineKeyboard([
-        ...tasks.map((x) => [
-          Markup.button.callback(
-            `${x.taskName} [S. ${x.week}]`,
-            `COMPLETE-[${x.week}-${x.taskType}]`
-          ),
-        ]),
-      ]),
+      ...Markup.inlineKeyboard(keyboardOptions),
     });
   });
 

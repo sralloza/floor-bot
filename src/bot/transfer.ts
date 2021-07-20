@@ -3,6 +3,7 @@ import Container from "typedi";
 import GSTasksService, { TaskType } from "../services/gsTasks";
 import GSUsersService from "../services/gsUsers";
 import TransferService from "../services/transfer";
+import { CANCEL_OPTION } from "./utils";
 
 export default (bot: Telegraf) => {
   bot.command("transferir", async (ctx) => {
@@ -23,16 +24,20 @@ export default (bot: Telegraf) => {
       );
 
     const tasks = await tasksService.getUserActiveAssignedTasks(user.username);
-    if (!tasks)
+    if (!tasks.length)
       return ctx.reply("No tienes ninguna tarea activa para transferir");
 
-    return ctx.reply("Elige a quién quieres realizar la transferencia", {
-      parse_mode: "Markdown",
-      ...Markup.inlineKeyboard([
+    const keyboardOptions = [
+      [
         ...users.map((x) =>
           Markup.button.callback(x.username, `TRANSFER1-${x.username}`)
         ),
-      ]),
+      ],
+    ];
+    keyboardOptions.push(CANCEL_OPTION);
+
+    return ctx.reply("Elige a quién quieres realizar la transferencia", {
+      ...Markup.inlineKeyboard(keyboardOptions),
     });
   });
 
@@ -52,16 +57,18 @@ export default (bot: Telegraf) => {
     if (!tasks.length)
       return ctx.editMessageText("No tienes ninguna tarea activa");
 
-    return ctx.editMessageText("Elige la tarea a transferir", {
-      parse_mode: "Markdown",
-      ...Markup.inlineKeyboard([
-        ...tasks.map((x) => [
-          Markup.button.callback(
-            `${x.taskName} [S. ${x.week}]`,
-            `TRANSFER2-[${userTo}]-[${x.week}]-[${x.taskType}]`
-          ),
-        ]),
+    const keyboardOptions = [
+      ...tasks.map((x) => [
+        Markup.button.callback(
+          `${x.taskName} [S. ${x.week}]`,
+          `TRANSFER2-[${userTo}]-[${x.week}]-[${x.taskType}]`
+        ),
       ]),
+    ];
+    keyboardOptions.push(CANCEL_OPTION);
+
+    return ctx.editMessageText("Elige la tarea a transferir", {
+      ...Markup.inlineKeyboard(keyboardOptions),
     });
   });
 
@@ -76,21 +83,23 @@ export default (bot: Telegraf) => {
       ctx.update.callback_query.from.id
     );
 
+    const keyboardOptions = [
+      [
+        Markup.button.callback(
+          "Aceptar",
+          `TRANSFER3-[${userFrom.username}]-[${taskWeek}]-[${taskType}]`
+        ),
+        Markup.button.callback("Rechazar", `TRANSFER4-[${userFrom.username}]`),
+      ],
+    ];
+    keyboardOptions.push(CANCEL_OPTION);
+
     await ctx.answerCbQuery();
     await ctx.editMessageText("Procesando...");
     await ctx.telegram.sendMessage(
       userTo.telegramID as number,
       `${userFrom.username} desea transferirte ${taskWeek}-${taskType}`,
-      Markup.inlineKeyboard([
-        Markup.button.callback(
-          "Aceptar",
-          `TRANSFER3-[${userFrom.username}]-[${taskWeek}]-[${taskType}]`
-        ),
-        Markup.button.callback(
-          "Rechazar",
-          `TRANSFER4-[${userFrom.username}]`
-        ),
-      ])
+      Markup.inlineKeyboard(keyboardOptions)
     );
     await ctx.editMessageText(
       `Petición de transferencia enviada a ${userTo.username}`
@@ -130,7 +139,7 @@ export default (bot: Telegraf) => {
         userFrom.telegramID as number,
         "Error al realizar la transferencia."
       );
-      return
+      return;
     }
 
     ctx.telegram.sendMessage(
