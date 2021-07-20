@@ -4,13 +4,15 @@ import { Logger } from "winston";
 import settings from "../config";
 import { TaskType } from "./gsTasks";
 
+export type Concept = "cocina" | "baños" | "salón" | "basura" | "lavavajillas";
+
 interface ExchangeRate {
   concept: string;
   tickets: number;
 }
 
 interface DBInput {
-  concepto: string;
+  concepto: Concept;
   tickets: string;
 }
 
@@ -31,6 +33,13 @@ export default class GSExchangeRateService {
       return { concept, tickets: +tickets };
     });
     return balances;
+  }
+
+  public async getRateByConcept(concept: Concept): Promise<ExchangeRate> {
+    const rates = await this.getRates();
+
+    for (let rate of rates) if (rate.concept == concept) return rate;
+    throw new Error("Invalid concept: " + concept.toString())
   }
 
   public async getRateByTaskType(taskType: TaskType): Promise<ExchangeRate> {

@@ -9,7 +9,7 @@ export default (bot: Telegraf) => {
     const userService = Container.get(GSUsersService);
     const tasksService = Container.get(GSTasksService);
 
-    const user = await userService.getUserByIDorError(
+    const user = await userService.getUserByIdOrError(
       ctx.update.message.from.id
     );
     let users = await userService.getUsers();
@@ -44,7 +44,7 @@ export default (bot: Telegraf) => {
     const tasksService = Container.get(GSTasksService);
 
     const userTo = ctx.match[1];
-    const user = await userService.getUserByIDorError(
+    const user = await userService.getUserByIdOrError(
       ctx.update.callback_query.from.id
     );
     const tasks = await tasksService.getUserActiveAssignedTasks(user.username);
@@ -72,7 +72,7 @@ export default (bot: Telegraf) => {
     const userService = Container.get(GSUsersService);
     const userTo = await userService.getUserByUsernameOrError(ctx.match[1]);
 
-    const userFrom = await userService.getUserByIDorError(
+    const userFrom = await userService.getUserByIdOrError(
       ctx.update.callback_query.from.id
     );
 
@@ -105,7 +105,7 @@ export default (bot: Telegraf) => {
     const userService = Container.get(GSUsersService);
 
     const userFrom = await userService.getUserByUsernameOrError(ctx.match[1]);
-    const userTo = await userService.getUserByIDorError(
+    const userTo = await userService.getUserByIdOrError(
       ctx.update.callback_query.from.id
     );
 
@@ -148,7 +148,7 @@ export default (bot: Telegraf) => {
     const userService = Container.get(GSUsersService);
 
     const userFrom = await userService.getUserByUsernameOrError(ctx.match[1]);
-    const userTo = await userService.getUserByIDorError(
+    const userTo = await userService.getUserByIdOrError(
       ctx.update.callback_query.from.id
     );
 

@@ -8,7 +8,7 @@ export default (bot: Telegraf) => {
   bot.command("completar_tarea", async (ctx) => {
     const userService = Container.get(GSUsersService);
     const tasksService = Container.get(GSTasksService);
-    const user = await userService.getUserByIDorError(
+    const user = await userService.getUserByIdOrError(
       ctx.update.message.from.id
     );
     const tasks = await tasksService.getUserActiveAssignedTasks(user.username);
@@ -31,7 +31,7 @@ export default (bot: Telegraf) => {
   bot.action(/COMPLETE-\[(\d+)-(.+)\]/, async (ctx) => {
     const userService = Container.get(GSUsersService);
     const tasksService = Container.get(GSTasksService);
-    const user = await userService.getUserByIDorError(
+    const user = await userService.getUserByIdOrError(
       ctx.callbackQuery.from.id
     );
     const week = +ctx.match[1];
