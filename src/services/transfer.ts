@@ -1,4 +1,3 @@
-import { GoogleSpreadsheet } from "google-spreadsheet";
 import { Inject, Service } from "typedi";
 import { Logger } from "winston";
 import settings from "../config";
