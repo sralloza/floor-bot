@@ -31,6 +31,7 @@ export default class TransferService {
     );
 
     // 2. Transfer tickets
+    console.log([userFrom, userTo, exchangeRate.tickets])
     await this.ticketsService.transferTickets(
       userFrom,
       userTo,
@@ -46,6 +47,7 @@ export default class TransferService {
       userFrom,
       userTo,
       task: taskType,
+      week: week,
       tickets: exchangeRate.tickets,
     };
     await this.transactionService.createTransaction(t);

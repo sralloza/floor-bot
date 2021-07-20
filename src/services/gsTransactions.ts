@@ -8,6 +8,7 @@ export interface Transaction {
   userFrom: string;
   userTo: string;
   task: string;
+  week: number;
   tickets: number;
 }
 
@@ -16,6 +17,7 @@ interface DBInput {
   usuarioOrigen: string;
   usuarioDestino: string;
   tarea: string;
+  semana: string;
   tickets: string;
 }
 
@@ -37,10 +39,18 @@ export default class GSTransactionsService {
         usuarioOrigen: userFrom,
         usuarioDestino: userTo,
         tarea: task,
+        semana: week,
         tickets,
       } = row as unknown as DBInput;
       const timestamp = new Date(Date.parse(marcaTemporal));
-      return { timestamp, userFrom, userTo, task, tickets: +tickets };
+      return {
+        timestamp,
+        userFrom,
+        userTo,
+        task,
+        week: +week,
+        tickets: +tickets,
+      };
     });
     return transactions;
   }
@@ -52,6 +62,7 @@ export default class GSTransactionsService {
       usuarioOrigen: t.userFrom,
       usuarioDestino: t.userTo,
       tarea: t.task,
+      semana: t.week.toString(),
       tickets: t.tickets.toString(),
     };
     await sheet.addRow(newRow as any);

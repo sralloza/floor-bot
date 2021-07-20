@@ -52,6 +52,22 @@ export default class GSUsersService {
     return null;
   }
 
+  public async getUserByUsernameOrError(
+    username: string
+  ): Promise<RegisteredUser> {
+    const user = await this.getUserByUsername(username);
+    if (user) return user;
+    throw new UserNotFoundError(username);
+  }
+
+  public async getUserByUsername(
+    username: string
+  ): Promise<RegisteredUser | null> {
+    const users = await this.getUsers();
+    for (let user of users) if (user.username === username) return user;
+    return null;
+  }
+
   public async canRegisterTelegramID(telegramID: number): Promise<boolean> {
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
