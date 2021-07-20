@@ -2,12 +2,9 @@ import { scheduleJob } from "node-schedule";
 import Container from "typedi";
 import { Logger } from "winston";
 import GSTicketsService from "../services/gsTickets";
-import base from "./base";
 
 export default () => {
-  scheduleJob("0 3 * * *", async () => {
-    await base();
-
+  scheduleJob("balance-system" ,"0 3 * * *", async () => {
     const ticketsService = Container.get(GSTicketsService);
     const logger: Logger = Container.get("logger");
 

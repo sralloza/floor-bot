@@ -2,12 +2,9 @@ import { scheduleJob } from "node-schedule";
 import Container from "typedi";
 import { Logger } from "winston";
 import GSTasksService from "../services/gsTasks";
-import base from "./base";
 
 export default () => {
-  scheduleJob("* * * * *", async () => {
-    await base();
-
+  scheduleJob("weekly-tasks", "0 11 * * 0", async () => {
     const tasksService = Container.get(GSTasksService);
     const logger: Logger = Container.get("logger");
 

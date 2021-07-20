@@ -12,27 +12,24 @@ import spreadsheetsLoader from "./spreadsheets";
 interface Args {
   app: Application;
   bot: Telegraf;
-  cronLoading: boolean;
 }
 
-export default async ({ app, bot, cronLoading = false }: Args) => {
+export default async ({ app, bot }: Args) => {
   app.use(morgan("combined"));
-  if (!cronLoading) Logger.info("Morgan loaded");
+  Logger.info("Morgan loaded");
 
-  await dependencyInjector(cronLoading);
-  if (!cronLoading) Logger.info("Dependency Injector loaded");
+  await dependencyInjector();
+  Logger.info("Dependency Injector loaded");
 
   botLoader(bot);
-  if (!cronLoading) Logger.info("Telegram Bot loaded");
+  Logger.info("Telegram Bot loaded");
 
   await spreadsheetsLoader();
-  if (!cronLoading) Logger.info("Spreadsheets loaded");
+  Logger.info("Spreadsheets loaded");
 
   expressLoader({ app: app });
-  if (!cronLoading) Logger.info("Express loaded");
+  Logger.info("Express loaded");
 
-  if (!cronLoading) {
-    cronScheduler();
-    Logger.info("Cron loaded");
-  }
+  cronScheduler();
+  Logger.info("Cron loaded");
 };
