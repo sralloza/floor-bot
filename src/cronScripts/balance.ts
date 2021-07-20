@@ -4,7 +4,7 @@ import { Logger } from "winston";
 import GSTicketsService from "../services/gsTickets";
 
 export default () => {
-  scheduleJob("balance-system" ,"0 3 * * *", async () => {
+  scheduleJob("balance-system", "0 3 * * *", async () => {
     const ticketsService = Container.get(GSTicketsService);
     const logger: Logger = Container.get("logger");
 
