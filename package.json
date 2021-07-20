@@ -5,6 +5,7 @@
    "main": "./build/src/app.js",
    "scripts": {
       "lint": "eslint . --ext .ts",
+      "prettier-format": "prettier --config .prettierrc --write src/**/*.ts",
       "test": "echo \"Error: no test specified\" && exit 1",
       "prestart": "rimraf build/",
       "start": "tsc && node ."
@@ -42,6 +43,7 @@
       "@typescript-eslint/eslint-plugin": "^4.28.4",
       "@typescript-eslint/parser": "^4.28.4",
       "eslint": "^7.31.0",
+      "prettier": "^2.3.2",
       "typescript": "3.3.3333"
    }
 }
