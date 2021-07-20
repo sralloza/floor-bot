@@ -36,7 +36,7 @@ export default class GSUsersService {
     return users;
   }
 
-  public async getUserByIDorError(telegramID: number): Promise<RegisteredUser> {
+  public async getUserByIdOrError(telegramID: number): Promise<RegisteredUser> {
     const user = await this.getUserByTelegramID(telegramID);
     if (user) return user;
     throw new UserNotFoundError(telegramID.toString());
