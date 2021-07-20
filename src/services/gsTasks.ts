@@ -1,5 +1,6 @@
 import { GoogleSpreadsheet, GoogleSpreadsheetCell } from "google-spreadsheet";
-import { Inject, Service } from "typedi";
+import { Telegraf } from "telegraf";
+import Container, { Inject, Service } from "typedi";
 import { Logger } from "winston";
 import settings from "../config";
 import GSUsersService from "./gsUsers";
@@ -78,7 +79,7 @@ export default class GSTasksService {
       cocina: assignedTask.kitchen,
     };
     await sheet.addRow(newRow as any);
-    this.logger.info(`Created task: ${JSON.stringify(newRow)}`)
+    this.logger.info(`Created task: ${JSON.stringify(newRow)}`);
   }
 
   public async getUserActiveAssignedTasks(
@@ -213,20 +214,49 @@ export default class GSTasksService {
     return array;
   }
 
-  public async createWeeklyTasks() {
+  private async notifyUsers(task: AssignedTask) {
+    const preMsg = "Tareas repartidas. Tu tarea semanal es: ";
+    const bot: Telegraf = Container.get("bot");
+    const logger: Logger = Container.get("logger");
+
+    const bUser = await this.usersService.getUserByUsernameOrError(
+      task.bathrooms
+    );
+    const lrUser = await this.usersService.getUserByUsernameOrError(
+      task.livingRoom
+    );
+    const kUser = await this.usersService.getUserByUsernameOrError(
+      task.kitchen
+    );
+
+    if (bUser.telegramID) {
+      await bot.telegram.sendMessage(bUser.telegramID, preMsg + "Baños");
+      logger.info(`User ${bUser.username} notified for bathroom`);
+    }
+    if (lrUser.telegramID) {
+      await bot.telegram.sendMessage(lrUser.telegramID, preMsg + "Salón");
+      logger.info(`User ${lrUser.username} notified for living room`);
+    }
+    if (kUser.telegramID) {
+      await bot.telegram.sendMessage(kUser.telegramID, preMsg + "Cocina");
+      logger.info(`User ${kUser.username} notified for kitchen`);
+    }
+  }
+
+  public async createWeeklyTasks(notifyUsers = false) {
     const currentTasks = await this.getAssignedTasks();
+    const users = await this.usersService.getUsers();
+    const usernames = users.map((e) => e.username);
 
     if (!currentTasks.length) {
-      let users = await this.usersService.getUsers();
-      users = this.shuffleArray(users);
-
       const task: AssignedTask = {
         week: 1,
-        bathrooms: users[0].username,
-        kitchen: users[1].username,
-        livingRoom: users[2].username,
+        bathrooms: usernames[0],
+        livingRoom: usernames[1],
+        kitchen: usernames[2],
       };
       await this.createAssignedTask(task);
+      if (notifyUsers) await this.notifyUsers(task);
       return;
     }
 
@@ -238,13 +268,14 @@ export default class GSTasksService {
       lastTask.kitchen.user,
       lastTask.livingRoom.user,
     ];
-    const newUsers = this.rotate(lastUsers, 1)
+    const newUsers = this.rotate(usernames, (nextWeek - 1) % lastUsers.length);
     const task: AssignedTask = {
       week: nextWeek,
       bathrooms: newUsers[0],
-      kitchen: newUsers[1],
-      livingRoom: newUsers[2],
+      livingRoom: newUsers[1],
+      kitchen: newUsers[2],
     };
     await this.createAssignedTask(task);
+    if (notifyUsers) await this.notifyUsers(task);
   }
 }
