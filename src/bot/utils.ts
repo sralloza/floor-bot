@@ -1,4 +1,4 @@
-import { Telegraf } from "telegraf";
+import { Markup, Telegraf } from "telegraf";
 
 export const COMING_SOON = (ctx: any) => {
   ctx.replyWithMarkdown("*Próximamente...*");
@@ -23,6 +23,8 @@ HELP = HELP.replace(/_/g, "\\_")
 const START =
   "Para empezar a usar el bot, lee el apartado de *Primeros pasos* del manual de uso";
 
+export const CANCEL_OPTION = [Markup.button.callback("Cancelar", "CANCEL")];
+
 export default (bot: Telegraf) => {
   bot.command("start", (ctx) => {
     ctx.replyWithMarkdownV2(START);
@@ -34,6 +36,11 @@ export default (bot: Telegraf) => {
 
   bot.command("help", (ctx) => {
     ctx.replyWithMarkdownV2(HELP);
+  });
+
+  bot.action(/CANCEL/, (ctx) => {
+    ctx.editMessageReplyMarkup({ inline_keyboard: [] });
+    ctx.reply("Operación cancelada.");
   });
 
   bot.on("text", (ctx) => {
