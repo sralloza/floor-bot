@@ -1,7 +1,7 @@
 import { Container } from "typedi";
 import LoggerInstance from "./logger";
 
-export default async () => {
+export default async (): Promise<void> => {
   try {
     Container.set("logger", LoggerInstance);
     LoggerInstance.info("Logger injected into container");

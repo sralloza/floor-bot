@@ -70,7 +70,7 @@ export default class GSTasksService {
     return done ? "Green" : "White";
   }
 
-  public async createAssignedTask(assignedTask: AssignedTask) {
+  public async createAssignedTask(assignedTask: AssignedTask): Promise<void> {
     const sheet = this.doc.sheetsById[this.sheetID];
     const newRow: DBInput = {
       semana: assignedTask.week,
@@ -117,8 +117,8 @@ export default class GSTasksService {
     const rows = await sheet.getRows();
     const data: AdvancedAssignedTask[] = [];
 
-    for (let i: number = 0; i < rows.length; i++) {
-      let row = rows[i];
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
       await sheet.loadCells(row.a1Range.split("!")[1]);
 
       const week = sheet.getCell(i + 1, 0);
@@ -144,12 +144,12 @@ export default class GSTasksService {
     const rows = await sheet.getRows();
     let rowIndex = 0;
 
-    for (let row of rows) {
+    for (const row of rows) {
       rowIndex++;
       if (+row.semana === week) break;
     }
 
-    let row = rows[rowIndex - 1];
+    const row = rows[rowIndex - 1];
     await sheet.loadCells(row.a1Range.split("!")[1]);
 
     let cell: GoogleSpreadsheetCell;
@@ -173,17 +173,21 @@ export default class GSTasksService {
     await sheet.saveUpdatedCells();
   }
 
-  public async transfer(usernameTo: string, week: number, taskType: TaskType) {
+  public async transfer(
+    usernameTo: string,
+    week: number,
+    taskType: TaskType
+  ): Promise<void> {
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
     let rowIndex = 0;
 
-    for (let row of rows) {
+    for (const row of rows) {
       rowIndex++;
       if (+row.semana === week) break;
     }
 
-    let row = rows[rowIndex - 1];
+    const row = rows[rowIndex - 1];
     await sheet.loadCells(row.a1Range.split("!")[1]);
 
     let cell: GoogleSpreadsheetCell;
@@ -196,19 +200,9 @@ export default class GSTasksService {
     await sheet.saveUpdatedCells();
   }
 
-  private shuffleArray<Type>(array: Type[]): Type[] {
-    for (var i = array.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var temp = array[i];
-      array[i] = array[j];
-      array[j] = temp;
-    }
-    return array;
-  }
-
-  private rotate<T>(array: T[], times: number = 1): T[] {
+  private rotate<T>(array: T[], times = 1): T[] {
     while (times--) {
-      var temp = array.shift() as T;
+      const temp = array.shift() as T;
       array.push(temp);
     }
     return array;
@@ -243,7 +237,7 @@ export default class GSTasksService {
     }
   }
 
-  public async createWeeklyTasks(notifyUsers = false) {
+  public async createWeeklyTasks(notifyUsers = false): Promise<void> {
     const currentTasks = await this.getAssignedTasks();
     const users = await this.usersService.getUsers();
     const usernames = users.map((e) => e.username);

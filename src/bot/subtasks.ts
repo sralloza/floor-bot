@@ -3,8 +3,7 @@ import Container from "typedi";
 import SubtasksService, { Subtask } from "../services/subtasks";
 import { CANCEL_OPTION } from "./utils";
 
-
-export default (bot: Telegraf) => {
+export default (bot: Telegraf): void => {
   bot.command("subtareas", async (ctx) => {
     const subtasksService = Container.get(SubtasksService);
     const subtasks = subtasksService.listSubtasks();

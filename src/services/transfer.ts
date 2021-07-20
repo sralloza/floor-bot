@@ -23,7 +23,7 @@ export default class TransferService {
     userTo: string,
     week: number,
     taskType: TaskType
-  ) {
+  ): Promise<void> {
     // 1. Get exchange rate of task
     const exchangeRate = await this.exchangeRatesService.getRateByTaskType(
       taskType

@@ -65,7 +65,7 @@ const openapiSpecification = swaggerJsdoc(options);
  *            type: string
  */
 
-export default (app: Router) => {
+export default (app: Router): void => {
   app.use("/", router);
 
   const jsonName = "openapi.json";

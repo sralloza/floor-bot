@@ -3,7 +3,7 @@ import Container from "typedi";
 import { Logger } from "winston";
 import GSTasksService from "../services/gsTasks";
 
-export default () => {
+export default (): void => {
   scheduleJob("weekly-tasks", "0 11 * * 0", async () => {
     const tasksService = Container.get(GSTasksService);
     const logger: Logger = Container.get("logger");

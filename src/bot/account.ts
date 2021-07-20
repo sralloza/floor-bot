@@ -10,7 +10,7 @@ import { CANCEL_OPTION } from "./utils";
 const ALREADY_REGISTER_MSG = `Ya te has registrado. No hace falta que te vuelvas a registrar.
 Si crees que es un error, contacta con el administrador.`;
 
-export default (bot: Telegraf) => {
+export default (bot: Telegraf): void => {
   bot.command("registro", async (ctx) => {
     const service = Container.get(GSUsersService);
     const users = await service.getUsers();

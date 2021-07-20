@@ -4,7 +4,7 @@ import GSTasksService, { TaskType } from "../services/gsTasks";
 import GSUsersService from "../services/gsUsers";
 import { CANCEL_OPTION } from "./utils";
 
-export default (bot: Telegraf) => {
+export default (bot: Telegraf): void => {
   bot.command("completar_tarea", async (ctx) => {
     const userService = Container.get(GSUsersService);
     const tasksService = Container.get(GSTasksService);

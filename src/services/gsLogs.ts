@@ -12,8 +12,8 @@ export default class GSLogsService {
     @Inject("doc") private doc: GoogleSpreadsheet
   ) {}
 
-  public async logMessage(message: string) {
+  public async logMessage(message: string): Promise<void> {
     const sheet = this.doc.sheetsByTitle["Logs"];
-    return await sheet.addRow([new Date().toJSON(), message]);
+    await sheet.addRow([new Date().toJSON(), message]);
   }
 }

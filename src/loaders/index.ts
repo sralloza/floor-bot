@@ -14,7 +14,7 @@ interface Args {
   bot: Telegraf;
 }
 
-export default async ({ app, bot }: Args) => {
+export default async ({ app, bot }: Args): Promise<void> => {
   app.use(morgan("combined"));
   Logger.info("Morgan loaded");
 
@@ -27,7 +27,7 @@ export default async ({ app, bot }: Args) => {
   await spreadsheetsLoader();
   Logger.info("Spreadsheets loaded");
 
-  expressLoader({ app: app });
+  expressLoader(app);
   Logger.info("Express loaded");
 
   cronScheduler();

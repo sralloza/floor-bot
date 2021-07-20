@@ -5,7 +5,7 @@ import tasks from "./tasks";
 import transfer from "./transfer";
 import utils from "./utils";
 
-export default (bot: Telegraf) => {
+export default (bot: Telegraf): void => {
   account(bot);
   subtasks(bot);
   tasks(bot);

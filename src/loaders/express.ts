@@ -7,7 +7,7 @@ import routes from "../api";
 import config from "../config";
 import { HTTPException } from "../interfaces/errors";
 
-export default ({ app }: { app: express.Application }) => {
+export default (app: express.Application): void => {
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
   // It shows the real origin IP in the heroku or Cloudwatch logs
   app.enable("trust proxy");
@@ -20,6 +20,7 @@ export default ({ app }: { app: express.Application }) => {
 
   app.use((req, res, next) => {
     res.status(404).json({ detail: "Not Found" });
+    next()
   });
 
   app.use(
@@ -59,6 +60,7 @@ export default ({ app }: { app: express.Application }) => {
       const logger: Logger = Container.get("logger");
       logger.error("🔥 error: %o", err);
       res.status(err.status || 500).json({ detail: err.message });
+      next()
     }
   );
 };

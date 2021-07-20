@@ -11,7 +11,8 @@ async function startServer() {
 
   const bot = new Telegraf(token);
 
-  await require("./loaders").default({ app, bot });
+  const loader = await import("./loaders");
+  await loader.default({ app, bot });
 
   app
     .listen(settings.port, () => {

@@ -25,7 +25,7 @@ export default class SubTasksService {
     return VALID_SUBTASKS;
   }
 
-  public async processSubtask(subtask: Subtask, telegramID: number) {
+  public async processSubtask(subtask: Subtask, telegramID: number): Promise<void> {
     const user = await this.userService.getUserByIdOrError(telegramID);
     const rate = await this.exchangeRateService.getRateByConcept(subtask);
 

@@ -46,7 +46,7 @@ export default class GSUsersService {
     telegramID: number
   ): Promise<RegisteredUser | null> {
     const users = await this.getUsers();
-    for (let user of users) {
+    for (const user of users) {
       if (user.telegramID == telegramID) return user;
     }
     return null;
@@ -64,7 +64,7 @@ export default class GSUsersService {
     username: string
   ): Promise<RegisteredUser | null> {
     const users = await this.getUsers();
-    for (let user of users) if (user.username === username) return user;
+    for (const user of users) if (user.username === username) return user;
     return null;
   }
 
@@ -79,7 +79,7 @@ export default class GSUsersService {
     return true;
   }
 
-  public async setUserTelegramID(username: string, telegramID: number) {
+  public async setUserTelegramID(username: string, telegramID: number): Promise<void> {
     if ((await this.canRegisterTelegramID(telegramID)) === false)
       throw new TelegramIDAlreadySetError();
 

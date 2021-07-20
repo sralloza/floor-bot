@@ -5,7 +5,7 @@ import GSUsersService from "../services/gsUsers";
 import TransferService from "../services/transfer";
 import { CANCEL_OPTION } from "./utils";
 
-export default (bot: Telegraf) => {
+export default (bot: Telegraf): void => {
   bot.command("transferir", async (ctx) => {
     const userService = Container.get(GSUsersService);
     const tasksService = Container.get(GSTasksService);
@@ -150,10 +150,6 @@ export default (bot: Telegraf) => {
   });
 
   bot.action(/TRANSFER4-\[(.+)\]/, async (ctx) => {
-    const taskWeek = +ctx.match[2];
-    const taskType = ctx.match[3];
-
-    const tasksService = Container.get(TransferService);
     const userService = Container.get(GSUsersService);
 
     const userFrom = await userService.getUserByUsernameOrError(ctx.match[1]);

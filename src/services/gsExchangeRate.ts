@@ -38,7 +38,7 @@ export default class GSExchangeRateService {
   public async getRateByConcept(concept: Concept): Promise<ExchangeRate> {
     const rates = await this.getRates();
 
-    for (let rate of rates) if (rate.concept == concept) return rate;
+    for (const rate of rates) if (rate.concept == concept) return rate;
     throw new Error("Invalid concept: " + concept.toString())
   }
 
