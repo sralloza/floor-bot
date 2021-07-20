@@ -30,7 +30,6 @@ export default class TransferService {
     );
 
     // 2. Transfer tickets
-    console.log([userFrom, userTo, exchangeRate.tickets])
     await this.ticketsService.transferTickets(
       userFrom,
       userTo,
