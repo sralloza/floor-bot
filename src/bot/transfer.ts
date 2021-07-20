@@ -1,5 +1,6 @@
 import { Markup, Telegraf } from "telegraf";
 import Container from "typedi";
+import { Logger } from "winston";
 import GSTasksService, { TaskType } from "../services/gsTasks";
 import GSUsersService from "../services/gsUsers";
 import TransferService from "../services/transfer";
@@ -112,6 +113,7 @@ export default (bot: Telegraf): void => {
 
     const tasksService = Container.get(TransferService);
     const userService = Container.get(GSUsersService);
+    const logger: Logger = Container.get("logger");
 
     const userFrom = await userService.getUserByUsernameOrError(ctx.match[1]);
     const userTo = await userService.getUserByIdOrError(
@@ -133,7 +135,7 @@ export default (bot: Telegraf): void => {
         taskType as TaskType
       );
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       ctx.editMessageText(error.toString());
       ctx.telegram.sendMessage(
         userFrom.telegramID as number,

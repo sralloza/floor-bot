@@ -20,7 +20,7 @@ export default (app: express.Application): void => {
 
   app.use((req, res, next) => {
     res.status(404).json({ detail: "Not Found" });
-    next()
+    next();
   });
 
   app.use(
@@ -38,13 +38,15 @@ export default (app: express.Application): void => {
       return next(err);
     }
 
+    const logger: Logger = Container.get("service");
+
     const errors = [];
     for (const [loc, joiError] of err.details.entries()) {
       if (joiError.details.length > 1) {
-        console.error("MORE ERRORS THAN ANTICIPATED: %o", joiError.details);
+        logger.error("MORE ERRORS THAN ANTICIPATED: %o", joiError.details);
       }
       if (joiError.details[0].path.length > 1) {
-        console.error("MORE ERRORS THAN ANTICIPATED: %o", joiError.details);
+        logger.error("MORE ERRORS THAN ANTICIPATED: %o", joiError.details);
       }
 
       const msg = joiError.details[0].message;
@@ -60,7 +62,7 @@ export default (app: express.Application): void => {
       const logger: Logger = Container.get("logger");
       logger.error("🔥 error: %o", err);
       res.status(err.status || 500).json({ detail: err.message });
-      next()
+      next();
     }
   );
 };

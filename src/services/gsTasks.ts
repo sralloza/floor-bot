@@ -159,13 +159,13 @@ export default class GSTasksService {
     else cell = sheet.getCell(rowIndex, 3);
 
     if (this.getBackground(cell) === "Green") {
-      console.error("Already finished");
-      console.error({ week, username, taskType, cell });
+      this.logger.error("Already finished");
+      this.logger.error({ week, username, taskType, cell });
       throw new Error("Already finised");
     }
     if (cell.value != username) {
-      console.error("Cell is not owned by user");
-      console.error({ week, username, taskType, cell });
+      this.logger.error("Cell is not owned by user");
+      this.logger.error({ week, username, taskType, cell });
       throw new Error("Cell is not owned by user");
     }
 

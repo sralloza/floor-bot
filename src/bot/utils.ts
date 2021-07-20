@@ -1,4 +1,5 @@
 import { Markup, Telegraf } from "telegraf";
+import { Container } from "winston";
 import { version } from "../../package.json";
 
 let HELP = `
@@ -47,6 +48,7 @@ export default (bot: Telegraf): void => {
   });
 
   bot.on("text", (ctx) => {
-    console.log(ctx.update.message.chat);
+    const logger = Container.get("logger")
+    logger.info(ctx.update.message.chat);
   });
 };

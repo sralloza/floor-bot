@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { Container } from "winston";
 
 const isAuth = (req: Request, res: Response, next: NextFunction): void => {
   const token = req.headers["X-Token"];
@@ -6,7 +7,8 @@ const isAuth = (req: Request, res: Response, next: NextFunction): void => {
     res.status(401).json({ detail: "Not Authenticated" });
     return;
   }
-  console.log({ token });
+  const logger = Container.get("logger")
+  logger.info({ token });
   // TODO: check token
   next();
 };
