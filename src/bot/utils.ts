@@ -14,20 +14,22 @@ let HELP = `
 - /basura - el usuario indica que ha bajado la basura.
 `;
 
+HELP = HELP.replace(/_/g, "\\_").replace(/-/g, "\\-").replace(/\./g, "\\.")
+
 const START =
   "Para empezar a usar el bot, lee el apartado de *Primeros pasos* del manual de uso";
 
 export default (bot: Telegraf) => {
   bot.command("start", (ctx) => {
-    ctx.replyWithMarkdown(START);
+    ctx.replyWithMarkdownV2(START);
   });
 
   bot.command("ayuda", (ctx) => {
-    ctx.replyWithMarkdown(HELP);
+    ctx.replyWithMarkdownV2(HELP);
   });
 
   bot.command("help", (ctx) => {
-    ctx.replyWithMarkdown(HELP);
+    ctx.replyWithMarkdownV2(HELP);
   });
 
   bot.on("text", (ctx) => {
