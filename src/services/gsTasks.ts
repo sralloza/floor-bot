@@ -2,6 +2,7 @@ import { GoogleSpreadsheet, GoogleSpreadsheetCell } from "google-spreadsheet";
 import { Inject, Service } from "typedi";
 import { Logger } from "winston";
 import settings from "../config";
+import GSUsersService from "./gsUsers";
 
 interface AssignedTask {
   week: number;
@@ -43,7 +44,8 @@ export default class GSTasksService {
 
   constructor(
     @Inject("logger") private logger: Logger,
-    @Inject("doc") private doc: GoogleSpreadsheet
+    @Inject("doc") private doc: GoogleSpreadsheet,
+    @Inject() private usersService: GSUsersService
   ) {}
 
   private processSingleTaskCell(
@@ -76,6 +78,7 @@ export default class GSTasksService {
       cocina: assignedTask.kitchen,
     };
     await sheet.addRow(newRow as any);
+    this.logger.info(`Created task: ${JSON.stringify(newRow)}`)
   }
 
   public async getUserActiveAssignedTasks(
@@ -190,5 +193,58 @@ export default class GSTasksService {
 
     cell.value = usernameTo;
     await sheet.saveUpdatedCells();
+  }
+
+  private shuffleArray<Type>(array: Type[]): Type[] {
+    for (var i = array.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+    return array;
+  }
+
+  private rotate<T>(array: T[], times: number = 1): T[] {
+    while (times--) {
+      var temp = array.shift() as T;
+      array.push(temp);
+    }
+    return array;
+  }
+
+  public async createWeeklyTasks() {
+    const currentTasks = await this.getAssignedTasks();
+
+    if (!currentTasks.length) {
+      let users = await this.usersService.getUsers();
+      users = this.shuffleArray(users);
+
+      const task: AssignedTask = {
+        week: 1,
+        bathrooms: users[0].username,
+        kitchen: users[1].username,
+        livingRoom: users[2].username,
+      };
+      await this.createAssignedTask(task);
+      return;
+    }
+
+    const lastTask = currentTasks[currentTasks.length - 1];
+    const nextWeek = lastTask.week + 1;
+
+    const lastUsers = [
+      lastTask.bathrooms.user,
+      lastTask.kitchen.user,
+      lastTask.livingRoom.user,
+    ];
+    const newUsers = this.rotate(lastUsers, 1)
+    const task: AssignedTask = {
+      week: nextWeek,
+      bathrooms: newUsers[0],
+      kitchen: newUsers[1],
+      livingRoom: newUsers[2],
+    };
+    await this.createAssignedTask(task);
   }
 }

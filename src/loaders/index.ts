@@ -2,13 +2,19 @@ import { Application } from "express";
 import morgan from "morgan";
 import { Telegraf } from "telegraf";
 import botLoader from "./bot";
+import cronScheduler from "./cronScheduler";
 import dependencyInjector from "./dependencyInjector";
 import "./events";
 import expressLoader from "./express";
 import Logger from "./logger";
 import spreadsheetsLoader from "./spreadsheets";
 
-export default async ({ app, bot }: { app: Application; bot: Telegraf }) => {
+interface Args {
+  app: Application;
+  bot: Telegraf;
+}
+
+export default async ({ app, bot }: Args) => {
   app.use(morgan("combined"));
   Logger.info("Morgan loaded");
 
@@ -19,8 +25,11 @@ export default async ({ app, bot }: { app: Application; bot: Telegraf }) => {
   Logger.info("Telegram Bot loaded");
 
   await spreadsheetsLoader();
-  Logger.info("Spreadsheets loaded")
+  Logger.info("Spreadsheets loaded");
 
   expressLoader({ app: app });
   Logger.info("Express loaded");
+
+  cronScheduler();
+  Logger.info("Cron loaded");
 };
