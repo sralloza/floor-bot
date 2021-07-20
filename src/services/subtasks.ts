@@ -6,8 +6,11 @@ import GSTicketsService from "./gsTickets";
 import GSTransactionsService, { Transaction } from "./gsTransactions";
 import GSUsersService from "./gsUsers";
 
+export type Subtask = "basura" | "lavavajillas";
+const VALID_SUBTASKS = ["basura", "lavavajillas"];
+
 @Service()
-export default class CommonTasksService {
+export default class SubTasksService {
   sheetID = settings.google_sheets_ids.logs;
 
   constructor(
@@ -18,17 +21,23 @@ export default class CommonTasksService {
     @Inject() private transactionsService: GSTransactionsService
   ) {}
 
-  public async trash(telegramID: number) {
+  public listSubtasks(): string[] {
+    return VALID_SUBTASKS;
+  }
+
+  public async processSubtask(subtask: Subtask, telegramID: number) {
     const user = await this.userService.getUserByIdOrError(telegramID);
-    const rate = await this.exchangeRateService.getRateByConcept("basura");
+    const rate = await this.exchangeRateService.getRateByConcept(subtask);
+
     await this.ticketsService.transferTickets(
       "System",
       user.username,
       rate.tickets
     );
+
     const t: Transaction = {
       timestamp: new Date(),
-      task: "Basura",
+      task: subtask,
       tickets: rate.tickets,
       userFrom: "System",
       userTo: user.username,

@@ -4,7 +4,7 @@ import { Logger } from "winston";
 import settings from "../config";
 import { TaskType } from "./gsTasks";
 
-type Concept = "cocina" | "baños" | "salón" | "basura";
+export type Concept = "cocina" | "baños" | "salón" | "basura" | "lavavajillas";
 
 interface ExchangeRate {
   concept: string;
