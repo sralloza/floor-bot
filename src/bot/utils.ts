@@ -1,17 +1,19 @@
 import { Markup, Telegraf } from "telegraf";
+import { version } from "../../package.json";
 
 export const COMING_SOON = (ctx: any) => {
   ctx.replyWithMarkdown("*Próximamente...*");
 };
 
 let HELP = `
-- /ayuda - muestra este mensaje.
-- /help - muestra este mensaje.
-- /start - muestra unas instrucciones para empezar.
-- /registro - registra al usuario.
+- /ayuda - muestra este mensaje
+- /help - muestra este mensaje
+- /start - muestra unas instrucciones para empezar
+- /registro - registra al usuario
 - /completar_tarea - marcar tarea semanal como completada
 - /transferir - pide a otro usuario una transferencia
 - /subtareas - completar subtareas (basura, lavavajillas)
+- /version - muestra la versión del bot
 `;
 
 HELP = HELP.replace(/_/g, "\\_")
@@ -36,6 +38,11 @@ export default (bot: Telegraf) => {
 
   bot.command("help", (ctx) => {
     ctx.replyWithMarkdownV2(HELP);
+  });
+
+  bot.command("version", (ctx) => {
+    const parsedVersion = version.replace(/\./g, "\\.")
+    ctx.replyWithMarkdownV2(`Versión actual: _*v${parsedVersion}*_`);
   });
 
   bot.action(/CANCEL/, (ctx) => {
