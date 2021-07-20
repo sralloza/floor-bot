@@ -11,18 +11,14 @@ export default (bot: Telegraf): void => {
     const userService = Container.get(GSUsersService);
     const tasksService = Container.get(GSTasksService);
 
-    const user = await userService.getUserByIdOrError(
-      ctx.update.message.from.id
-    );
+    const user = await userService.getUserByIdOrError(ctx.update.message.from.id);
     let users = await userService.getUsers();
     users = users
       .filter((e) => e.telegramID)
       .filter((e) => e.username != user.username);
 
     if (!users.length)
-      return ctx.reply(
-        "No hay usuarios registrados para realizar la transferencia"
-      );
+      return ctx.reply("No hay usuarios registrados para realizar la transferencia");
 
     const tasks = await tasksService.getUserActiveAssignedTasks(user.username);
     if (!tasks.length)
@@ -32,13 +28,13 @@ export default (bot: Telegraf): void => {
       [
         ...users.map((x) =>
           Markup.button.callback(x.username, `TRANSFER1-${x.username}`)
-        ),
-      ],
+        )
+      ]
     ];
     keyboardOptions.push(CANCEL_OPTION);
 
     return ctx.reply("Elige a quién quieres realizar la transferencia", {
-      ...Markup.inlineKeyboard(keyboardOptions),
+      ...Markup.inlineKeyboard(keyboardOptions)
     });
   });
 
@@ -55,21 +51,20 @@ export default (bot: Telegraf): void => {
     );
     const tasks = await tasksService.getUserActiveAssignedTasks(user.username);
 
-    if (!tasks.length)
-      return ctx.editMessageText("No tienes ninguna tarea activa");
+    if (!tasks.length) return ctx.editMessageText("No tienes ninguna tarea activa");
 
     const keyboardOptions = [
       ...tasks.map((x) => [
         Markup.button.callback(
           `${x.taskName} [S. ${x.week}]`,
           `TRANSFER2-[${userTo}]-[${x.week}]-[${x.taskType}]`
-        ),
-      ]),
+        )
+      ])
     ];
     keyboardOptions.push(CANCEL_OPTION);
 
     return ctx.editMessageText("Elige la tarea a transferir", {
-      ...Markup.inlineKeyboard(keyboardOptions),
+      ...Markup.inlineKeyboard(keyboardOptions)
     });
   });
 
@@ -90,8 +85,8 @@ export default (bot: Telegraf): void => {
           "Aceptar",
           `TRANSFER3-[${userFrom.username}]-[${taskWeek}]-[${taskType}]`
         ),
-        Markup.button.callback("Rechazar", `TRANSFER4-[${userFrom.username}]`),
-      ],
+        Markup.button.callback("Rechazar", `TRANSFER4-[${userFrom.username}]`)
+      ]
     ];
     keyboardOptions.push(CANCEL_OPTION);
 
@@ -102,9 +97,7 @@ export default (bot: Telegraf): void => {
       `${userFrom.username} desea transferirte ${taskWeek}-${taskType}`,
       Markup.inlineKeyboard(keyboardOptions)
     );
-    await ctx.editMessageText(
-      `Petición de transferencia enviada a ${userTo.username}`
-    );
+    await ctx.editMessageText(`Petición de transferencia enviada a ${userTo.username}`);
   });
 
   bot.action(/TRANSFER3-\[(.+)\]-\[(\d+)\]-\[(.+)\]/, async (ctx) => {

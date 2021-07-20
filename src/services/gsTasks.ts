@@ -49,9 +49,7 @@ export default class GSTasksService {
     @Inject() private usersService: GSUsersService
   ) {}
 
-  private processSingleTaskCell(
-    cell: GoogleSpreadsheetCell
-  ): AdvancedSingleTask {
+  private processSingleTaskCell(cell: GoogleSpreadsheetCell): AdvancedSingleTask {
     const style = cell.effectiveFormat.backgroundColor;
     const done = !(style.red === 1 && style.green === 1 && style.blue === 1);
     const user = String(cell.value);
@@ -76,15 +74,13 @@ export default class GSTasksService {
       semana: assignedTask.week,
       baños: assignedTask.bathrooms,
       salón: assignedTask.livingRoom,
-      cocina: assignedTask.kitchen,
+      cocina: assignedTask.kitchen
     };
     await sheet.addRow(newRow as any);
     this.logger.info(`Created task: ${JSON.stringify(newRow)}`);
   }
 
-  public async getUserActiveAssignedTasks(
-    username: string
-  ): Promise<UserTask[]> {
+  public async getUserActiveAssignedTasks(username: string): Promise<UserTask[]> {
     const assignedTasks = await this.getAssignedTasks();
     const filteredTasks: UserTask[] = [];
 
@@ -93,19 +89,19 @@ export default class GSTasksService {
         filteredTasks.push({
           week: task.week,
           taskName: "Baños",
-          taskType: "Bathroom",
+          taskType: "Bathroom"
         });
       if (task.livingRoom.user === username && !task.livingRoom.done)
         filteredTasks.push({
           week: task.week,
           taskName: "Salón",
-          taskType: "LivingRoom",
+          taskType: "LivingRoom"
         });
       if (task.kitchen.user === username && !task.kitchen.done)
         filteredTasks.push({
           week: task.week,
           taskName: "Cocina",
-          taskType: "Kitchen",
+          taskType: "Kitchen"
         });
     }
 
@@ -129,7 +125,7 @@ export default class GSTasksService {
         week: +week.value,
         bathrooms: this.processSingleTaskCell(bathrooms),
         livingRoom: this.processSingleTaskCell(livingRoom),
-        kitchen: this.processSingleTaskCell(kitchen),
+        kitchen: this.processSingleTaskCell(kitchen)
       });
     }
     return data;
@@ -213,15 +209,9 @@ export default class GSTasksService {
     const bot: Telegraf = Container.get("bot");
     const logger: Logger = Container.get("logger");
 
-    const bUser = await this.usersService.getUserByUsernameOrError(
-      task.bathrooms
-    );
-    const lrUser = await this.usersService.getUserByUsernameOrError(
-      task.livingRoom
-    );
-    const kUser = await this.usersService.getUserByUsernameOrError(
-      task.kitchen
-    );
+    const bUser = await this.usersService.getUserByUsernameOrError(task.bathrooms);
+    const lrUser = await this.usersService.getUserByUsernameOrError(task.livingRoom);
+    const kUser = await this.usersService.getUserByUsernameOrError(task.kitchen);
 
     if (bUser.telegramID) {
       await bot.telegram.sendMessage(bUser.telegramID, preMsg + "Baños");
@@ -247,7 +237,7 @@ export default class GSTasksService {
         week: 1,
         bathrooms: usernames[0],
         livingRoom: usernames[1],
-        kitchen: usernames[2],
+        kitchen: usernames[2]
       };
       await this.createAssignedTask(task);
       if (notifyUsers) await this.notifyUsers(task);
@@ -260,14 +250,14 @@ export default class GSTasksService {
     const lastUsers = [
       lastTask.bathrooms.user,
       lastTask.kitchen.user,
-      lastTask.livingRoom.user,
+      lastTask.livingRoom.user
     ];
     const newUsers = this.rotate(usernames, (nextWeek - 1) % lastUsers.length);
     const task: AssignedTask = {
       week: nextWeek,
       bathrooms: newUsers[0],
       livingRoom: newUsers[1],
-      kitchen: newUsers[2],
+      kitchen: newUsers[2]
     };
     await this.createAssignedTask(task);
     if (notifyUsers) await this.notifyUsers(task);

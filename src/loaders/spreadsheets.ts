@@ -3,13 +3,11 @@ import Container from "typedi";
 import settings from "../config";
 
 export default async (): Promise<void> => {
-  const doc = new GoogleSpreadsheet(
-    "1FqHRnOMOPhknpQwxyq6Wh79jO-KV-a-bxCli0LsjKvc"
-  );
+  const doc = new GoogleSpreadsheet("1FqHRnOMOPhknpQwxyq6Wh79jO-KV-a-bxCli0LsjKvc");
 
   await doc.useServiceAccountAuth({
     client_email: settings.client_email,
-    private_key: settings.private_key,
+    private_key: settings.private_key
   });
 
   await doc.loadInfo();

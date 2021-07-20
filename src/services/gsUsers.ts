@@ -42,9 +42,7 @@ export default class GSUsersService {
     throw new UserNotFoundError(telegramID.toString());
   }
 
-  public async getUserByTelegramID(
-    telegramID: number
-  ): Promise<RegisteredUser | null> {
+  public async getUserByTelegramID(telegramID: number): Promise<RegisteredUser | null> {
     const users = await this.getUsers();
     for (const user of users) {
       if (user.telegramID == telegramID) return user;
@@ -52,17 +50,13 @@ export default class GSUsersService {
     return null;
   }
 
-  public async getUserByUsernameOrError(
-    username: string
-  ): Promise<RegisteredUser> {
+  public async getUserByUsernameOrError(username: string): Promise<RegisteredUser> {
     const user = await this.getUserByUsername(username);
     if (user) return user;
     throw new UserNotFoundError(username);
   }
 
-  public async getUserByUsername(
-    username: string
-  ): Promise<RegisteredUser | null> {
+  public async getUserByUsername(username: string): Promise<RegisteredUser | null> {
     const users = await this.getUsers();
     for (const user of users) if (user.username === username) return user;
     return null;

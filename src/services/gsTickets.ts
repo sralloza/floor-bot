@@ -73,9 +73,7 @@ export default class GSTicketsService {
       const distribute = Math.floor(Math.abs(systemBalance.tickets) / nUsers);
       this.logger.info(`Distributing ${distribute} tickets`);
       if (distribute === 0) {
-        this.logger.info(
-          `No tickets to distribute (${JSON.stringify(systemBalance)})`
-        );
+        this.logger.info(`No tickets to distribute (${JSON.stringify(systemBalance)})`);
         return;
       }
 

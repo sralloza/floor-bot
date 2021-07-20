@@ -16,13 +16,10 @@ export default (): void => {
     const users = await usersService.getUsers();
 
     for (const user of users) {
-      const tasks = await tasksService.getUserActiveAssignedTasks(
-        user.username
-      );
+      const tasks = await tasksService.getUserActiveAssignedTasks(user.username);
       if (tasks.length && user.telegramID) {
         const taskNames = tasks.map((e) => e.taskName).join(", ");
-        const preMsg =
-          "Recordatorio de que es domingo y tienes las siguientes tareas:";
+        const preMsg = "Recordatorio de que es domingo y tienes las siguientes tareas:";
 
         const msg = `${preMsg} ${taskNames}`;
         await bot.telegram.sendMessage(user.telegramID, msg);

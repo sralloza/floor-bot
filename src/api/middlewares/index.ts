@@ -1,5 +1,5 @@
-import isAuth from './auth';
+import isAuth from "./auth";
 
 export default {
-  isAuth,
+  isAuth
 };

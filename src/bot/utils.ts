@@ -48,7 +48,7 @@ export default (bot: Telegraf): void => {
   });
 
   bot.on("text", (ctx) => {
-    const logger = Container.get("logger")
+    const logger = Container.get("logger");
     logger.info(ctx.update.message.chat);
   });
 };

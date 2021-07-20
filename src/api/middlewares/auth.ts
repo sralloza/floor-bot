@@ -7,7 +7,7 @@ const isAuth = (req: Request, res: Response, next: NextFunction): void => {
     res.status(401).json({ detail: "Not Authenticated" });
     return;
   }
-  const logger = Container.get("logger")
+  const logger = Container.get("logger");
   logger.info({ token });
   // TODO: check token
   next();

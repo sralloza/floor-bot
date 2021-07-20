@@ -23,14 +23,12 @@ export default (app: express.Application): void => {
     next();
   });
 
-  app.use(
-    (err: HTTPException, req: Request, res: Response, next: NextFunction) => {
-      if (err instanceof HTTPException) {
-        return res.status(err.status).json({ detail: err.message }).end();
-      }
-      return next(err);
+  app.use((err: HTTPException, req: Request, res: Response, next: NextFunction) => {
+    if (err instanceof HTTPException) {
+      return res.status(err.status).json({ detail: err.message }).end();
     }
-  );
+    return next(err);
+  });
 
   app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     // If this isn't a Celebrate error, send it to the next error handler
@@ -57,12 +55,10 @@ export default (app: express.Application): void => {
     return res.status(422).send({ detail: errors });
   });
 
-  app.use(
-    (err: HTTPException, req: Request, res: Response, next: NextFunction) => {
-      const logger: Logger = Container.get("logger");
-      logger.error("🔥 error: %o", err);
-      res.status(err.status || 500).json({ detail: err.message });
-      next();
-    }
-  );
+  app.use((err: HTTPException, req: Request, res: Response, next: NextFunction) => {
+    const logger: Logger = Container.get("logger");
+    logger.error("🔥 error: %o", err);
+    res.status(err.status || 500).json({ detail: err.message });
+    next();
+  });
 };
