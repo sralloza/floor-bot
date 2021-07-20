@@ -142,9 +142,7 @@ export default class GSTasksService {
 
     for (let row of rows) {
       rowIndex++;
-      if (+row.semana === week)
-        break;
-
+      if (+row.semana === week) break;
     }
 
     let row = rows[rowIndex - 1];
@@ -168,6 +166,29 @@ export default class GSTasksService {
     }
 
     this.setGreenBackground(cell);
+    await sheet.saveUpdatedCells();
+  }
+
+  public async transfer(usernameTo: string, week: number, taskType: TaskType) {
+    const sheet = this.doc.sheetsById[this.sheetID];
+    const rows = await sheet.getRows();
+    let rowIndex = 0;
+
+    for (let row of rows) {
+      rowIndex++;
+      if (+row.semana === week) break;
+    }
+
+    let row = rows[rowIndex - 1];
+    await sheet.loadCells(row.a1Range.split("!")[1]);
+
+    let cell: GoogleSpreadsheetCell;
+
+    if (taskType === "Bathroom") cell = sheet.getCell(rowIndex, 1);
+    else if (taskType === "LivingRoom") cell = sheet.getCell(rowIndex, 2);
+    else cell = sheet.getCell(rowIndex, 3);
+
+    cell.value = usernameTo;
     await sheet.saveUpdatedCells();
   }
 }
