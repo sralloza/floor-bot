@@ -14,7 +14,11 @@ let HELP = `
 - /subtareas - completar subtareas (basura, lavavajillas)
 `;
 
-HELP = HELP.replace(/_/g, "\\_").replace(/-/g, "\\-").replace(/\./g, "\\.")
+HELP = HELP.replace(/_/g, "\\_")
+  .replace(/-/g, "\\-")
+  .replace(/\./g, "\\.")
+  .replace(/\(/g, "\\(")
+  .replace(/\)/g, "\\)");
 
 const START =
   "Para empezar a usar el bot, lee el apartado de *Primeros pasos* del manual de uso";
