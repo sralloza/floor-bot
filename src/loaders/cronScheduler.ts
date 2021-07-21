@@ -1,2 +1,2 @@
 import cronScripts from "../cronScripts";
-export default cronScripts
+export default cronScripts;

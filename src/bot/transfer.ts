@@ -1,27 +1,24 @@
 import { Markup, Telegraf } from "telegraf";
 import Container from "typedi";
+import { Logger } from "winston";
 import GSTasksService, { TaskType } from "../services/gsTasks";
 import GSUsersService from "../services/gsUsers";
 import TransferService from "../services/transfer";
 import { CANCEL_OPTION } from "./utils";
 
-export default (bot: Telegraf) => {
+export default (bot: Telegraf): void => {
   bot.command("transferir", async (ctx) => {
     const userService = Container.get(GSUsersService);
     const tasksService = Container.get(GSTasksService);
 
-    const user = await userService.getUserByIdOrError(
-      ctx.update.message.from.id
-    );
+    const user = await userService.getUserByIdOrError(ctx.update.message.from.id);
     let users = await userService.getUsers();
     users = users
       .filter((e) => e.telegramID)
       .filter((e) => e.username != user.username);
 
     if (!users.length)
-      return ctx.reply(
-        "No hay usuarios registrados para realizar la transferencia"
-      );
+      return ctx.reply("No hay usuarios registrados para realizar la transferencia");
 
     const tasks = await tasksService.getUserActiveAssignedTasks(user.username);
     if (!tasks.length)
@@ -31,13 +28,13 @@ export default (bot: Telegraf) => {
       [
         ...users.map((x) =>
           Markup.button.callback(x.username, `TRANSFER1-${x.username}`)
-        ),
-      ],
+        )
+      ]
     ];
     keyboardOptions.push(CANCEL_OPTION);
 
     return ctx.reply("Elige a quién quieres realizar la transferencia", {
-      ...Markup.inlineKeyboard(keyboardOptions),
+      ...Markup.inlineKeyboard(keyboardOptions)
     });
   });
 
@@ -54,21 +51,20 @@ export default (bot: Telegraf) => {
     );
     const tasks = await tasksService.getUserActiveAssignedTasks(user.username);
 
-    if (!tasks.length)
-      return ctx.editMessageText("No tienes ninguna tarea activa");
+    if (!tasks.length) return ctx.editMessageText("No tienes ninguna tarea activa");
 
     const keyboardOptions = [
       ...tasks.map((x) => [
         Markup.button.callback(
           `${x.taskName} [S. ${x.week}]`,
           `TRANSFER2-[${userTo}]-[${x.week}]-[${x.taskType}]`
-        ),
-      ]),
+        )
+      ])
     ];
     keyboardOptions.push(CANCEL_OPTION);
 
     return ctx.editMessageText("Elige la tarea a transferir", {
-      ...Markup.inlineKeyboard(keyboardOptions),
+      ...Markup.inlineKeyboard(keyboardOptions)
     });
   });
 
@@ -89,8 +85,8 @@ export default (bot: Telegraf) => {
           "Aceptar",
           `TRANSFER3-[${userFrom.username}]-[${taskWeek}]-[${taskType}]`
         ),
-        Markup.button.callback("Rechazar", `TRANSFER4-[${userFrom.username}]`),
-      ],
+        Markup.button.callback("Rechazar", `TRANSFER4-[${userFrom.username}]`)
+      ]
     ];
     keyboardOptions.push(CANCEL_OPTION);
 
@@ -101,9 +97,7 @@ export default (bot: Telegraf) => {
       `${userFrom.username} desea transferirte ${taskWeek}-${taskType}`,
       Markup.inlineKeyboard(keyboardOptions)
     );
-    await ctx.editMessageText(
-      `Petición de transferencia enviada a ${userTo.username}`
-    );
+    await ctx.editMessageText(`Petición de transferencia enviada a ${userTo.username}`);
   });
 
   bot.action(/TRANSFER3-\[(.+)\]-\[(\d+)\]-\[(.+)\]/, async (ctx) => {
@@ -112,6 +106,7 @@ export default (bot: Telegraf) => {
 
     const tasksService = Container.get(TransferService);
     const userService = Container.get(GSUsersService);
+    const logger: Logger = Container.get("logger");
 
     const userFrom = await userService.getUserByUsernameOrError(ctx.match[1]);
     const userTo = await userService.getUserByIdOrError(
@@ -133,7 +128,7 @@ export default (bot: Telegraf) => {
         taskType as TaskType
       );
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       ctx.editMessageText(error.toString());
       ctx.telegram.sendMessage(
         userFrom.telegramID as number,
@@ -150,10 +145,6 @@ export default (bot: Telegraf) => {
   });
 
   bot.action(/TRANSFER4-\[(.+)\]/, async (ctx) => {
-    const taskWeek = +ctx.match[2];
-    const taskType = ctx.match[3];
-
-    const tasksService = Container.get(TransferService);
     const userService = Container.get(GSUsersService);
 
     const userFrom = await userService.getUserByUsernameOrError(ctx.match[1]);

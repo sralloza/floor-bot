@@ -5,7 +5,7 @@ import balance from "./balance";
 import notifications from "./notifications";
 import tasks from "./tasks";
 
-export default () => {
+export default (): void => {
   balance();
   tasks();
   notifications();

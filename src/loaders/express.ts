@@ -7,7 +7,7 @@ import routes from "../api";
 import config from "../config";
 import { HTTPException } from "../interfaces/errors";
 
-export default ({ app }: { app: express.Application }) => {
+export default (app: express.Application): void => {
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
   // It shows the real origin IP in the heroku or Cloudwatch logs
   app.enable("trust proxy");
@@ -20,16 +20,15 @@ export default ({ app }: { app: express.Application }) => {
 
   app.use((req, res, next) => {
     res.status(404).json({ detail: "Not Found" });
+    next();
   });
 
-  app.use(
-    (err: HTTPException, req: Request, res: Response, next: NextFunction) => {
-      if (err instanceof HTTPException) {
-        return res.status(err.status).json({ detail: err.message }).end();
-      }
-      return next(err);
+  app.use((err: HTTPException, req: Request, res: Response, next: NextFunction) => {
+    if (err instanceof HTTPException) {
+      return res.status(err.status).json({ detail: err.message }).end();
     }
-  );
+    return next(err);
+  });
 
   app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     // If this isn't a Celebrate error, send it to the next error handler
@@ -37,13 +36,15 @@ export default ({ app }: { app: express.Application }) => {
       return next(err);
     }
 
+    const logger: Logger = Container.get("service");
+
     const errors = [];
     for (const [loc, joiError] of err.details.entries()) {
       if (joiError.details.length > 1) {
-        console.error("MORE ERRORS THAN ANTICIPATED: %o", joiError.details);
+        logger.error("MORE ERRORS THAN ANTICIPATED: %o", joiError.details);
       }
       if (joiError.details[0].path.length > 1) {
-        console.error("MORE ERRORS THAN ANTICIPATED: %o", joiError.details);
+        logger.error("MORE ERRORS THAN ANTICIPATED: %o", joiError.details);
       }
 
       const msg = joiError.details[0].message;
@@ -54,11 +55,10 @@ export default ({ app }: { app: express.Application }) => {
     return res.status(422).send({ detail: errors });
   });
 
-  app.use(
-    (err: HTTPException, req: Request, res: Response, next: NextFunction) => {
-      const logger: Logger = Container.get("logger");
-      logger.error("🔥 error: %o", err);
-      res.status(err.status || 500).json({ detail: err.message });
-    }
-  );
+  app.use((err: HTTPException, req: Request, res: Response, next: NextFunction) => {
+    const logger: Logger = Container.get("logger");
+    logger.error("🔥 error: %o", err);
+    res.status(err.status || 500).json({ detail: err.message });
+    next();
+  });
 };

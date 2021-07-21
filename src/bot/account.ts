@@ -3,14 +3,14 @@ import Container from "typedi";
 import { Logger } from "winston";
 import GSUsersService, {
   TelegramIDAlreadySetError,
-  UserNotFoundError,
+  UserNotFoundError
 } from "../services/gsUsers";
 import { CANCEL_OPTION } from "./utils";
 
 const ALREADY_REGISTER_MSG = `Ya te has registrado. No hace falta que te vuelvas a registrar.
 Si crees que es un error, contacta con el administrador.`;
 
-export default (bot: Telegraf) => {
+export default (bot: Telegraf): void => {
   bot.command("registro", async (ctx) => {
     const service = Container.get(GSUsersService);
     const users = await service.getUsers();
@@ -28,17 +28,14 @@ export default (bot: Telegraf) => {
         ...users
           .filter((x) => !x.telegramID)
           .map((x) =>
-            Markup.button.callback(
-              x.username,
-              `REGISTER_USERNAME-${x.username}`
-            )
-          ),
-      ],
+            Markup.button.callback(x.username, `REGISTER_USERNAME-${x.username}`)
+          )
+      ]
     ];
     keyboardOptions.push(CANCEL_OPTION);
 
     return ctx.reply("Elige tu nombre de usuario", {
-      ...Markup.inlineKeyboard(keyboardOptions),
+      ...Markup.inlineKeyboard(keyboardOptions)
     });
   });
 
@@ -55,9 +52,7 @@ export default (bot: Telegraf) => {
         return ctx.editMessageText(ALREADY_REGISTER_MSG);
       }
       if (error instanceof UserNotFoundError) {
-        return ctx.editMessageText(
-          `Nombre de usuario no encontrado (${username})`
-        );
+        return ctx.editMessageText(`Nombre de usuario no encontrado (${username})`);
       }
       ctx.editMessageText("Fatal error");
       throw error;
@@ -68,8 +63,6 @@ export default (bot: Telegraf) => {
 
     const logger: Logger = Container.get("logger");
     const tgUser = ctx.callbackQuery.from;
-    logger.info(
-      `Telegram user ${JSON.stringify(tgUser)} registered as '${username}'`
-    );
+    logger.info(`Telegram user ${JSON.stringify(tgUser)} registered as '${username}'`);
   });
 };

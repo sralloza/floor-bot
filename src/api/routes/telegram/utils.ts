@@ -2,10 +2,8 @@ import { Router } from "express";
 
 const router = Router();
 
-
-export default (app: Router) => {
+export default (app: Router): void => {
   app.use("/telegram", router);
-
 
   /**
    *  @openapi
@@ -23,5 +21,4 @@ export default (app: Router) => {
   router.get("/status", (req, res) => {
     res.status(200).json({ detail: "Webhook is ready" });
   });
-
 };

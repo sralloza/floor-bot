@@ -23,18 +23,12 @@ export default class TransferService {
     userTo: string,
     week: number,
     taskType: TaskType
-  ) {
+  ): Promise<void> {
     // 1. Get exchange rate of task
-    const exchangeRate = await this.exchangeRatesService.getRateByTaskType(
-      taskType
-    );
+    const exchangeRate = await this.exchangeRatesService.getRateByTaskType(taskType);
 
     // 2. Transfer tickets
-    await this.ticketsService.transferTickets(
-      userFrom,
-      userTo,
-      exchangeRate.tickets
-    );
+    await this.ticketsService.transferTickets(userFrom, userTo, exchangeRate.tickets);
 
     // 3. Transfer task
     await this.tasksService.transfer(userTo, week, taskType);
@@ -46,7 +40,7 @@ export default class TransferService {
       userTo,
       task: taskType,
       week: week,
-      tickets: exchangeRate.tickets,
+      tickets: exchangeRate.tickets
     };
     await this.transactionService.createTransaction(t);
   }

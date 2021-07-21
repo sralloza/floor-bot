@@ -10,11 +10,11 @@ const options = {
     openapi: "3.0.2",
     info: {
       title: "Floor API documentation",
-      version: reqs.version,
-    },
+      version: reqs.version
+    }
     // servers: [{ url: "https://floor-api.sralloza.es" }],
   },
-  apis: ["./src/api/routes/**/*.ts"],
+  apis: ["./src/api/routes/**/*.ts"]
 };
 
 const openapiSpecification = swaggerJsdoc(options);
@@ -65,14 +65,12 @@ const openapiSpecification = swaggerJsdoc(options);
  *            type: string
  */
 
-export default (app: Router) => {
+export default (app: Router): void => {
   app.use("/", router);
 
   const jsonName = "openapi.json";
   const openapiJsonFullRoute =
-    settings.api_prefix == "/"
-      ? jsonName
-      : settings.api_prefix + "/" + jsonName;
+    settings.api_prefix == "/" ? jsonName : settings.api_prefix + "/" + jsonName;
 
   router.get("/" + jsonName, (req, res) => {
     res.send(openapiSpecification).end();
@@ -82,7 +80,7 @@ export default (app: Router) => {
     "/docs",
     redoc({
       title: "Floor API documentation",
-      specUrl: openapiJsonFullRoute,
+      specUrl: openapiJsonFullRoute
     })
   );
 

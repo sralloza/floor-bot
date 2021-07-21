@@ -1,16 +1,13 @@
 import { Markup, Telegraf } from "telegraf";
+import { Container } from "winston";
 import { version } from "../../package.json";
-
-export const COMING_SOON = (ctx: any) => {
-  ctx.replyWithMarkdown("*Próximamente...*");
-};
 
 let HELP = `
 - /ayuda - muestra este mensaje
 - /help - muestra este mensaje
 - /start - muestra unas instrucciones para empezar
 - /registro - registra al usuario
-- /completar_tarea - marcar tarea semanal como completada
+- /completar_tarea - marcar tarea semanal como completada
 - /transferir - pide a otro usuario una transferencia
 - /subtareas - completar subtareas (basura, lavavajillas)
 - /version - muestra la versión del bot
@@ -27,7 +24,7 @@ const START =
 
 export const CANCEL_OPTION = [Markup.button.callback("Cancelar", "CANCEL")];
 
-export default (bot: Telegraf) => {
+export default (bot: Telegraf): void => {
   bot.command("start", (ctx) => {
     ctx.replyWithMarkdownV2(START);
   });
@@ -41,7 +38,7 @@ export default (bot: Telegraf) => {
   });
 
   bot.command("version", (ctx) => {
-    const parsedVersion = version.replace(/\./g, "\\.")
+    const parsedVersion = version.replace(/\./g, "\\.");
     ctx.replyWithMarkdownV2(`Versión actual: _*v${parsedVersion}*_`);
   });
 
@@ -51,6 +48,7 @@ export default (bot: Telegraf) => {
   });
 
   bot.on("text", (ctx) => {
-    console.log(ctx.update.message.chat);
+    const logger = Container.get("logger");
+    logger.info(ctx.update.message.chat);
   });
 };

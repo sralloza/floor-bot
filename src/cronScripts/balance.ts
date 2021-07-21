@@ -3,7 +3,7 @@ import Container from "typedi";
 import { Logger } from "winston";
 import GSTicketsService from "../services/gsTickets";
 
-export default () => {
+export default (): void => {
   scheduleJob("balance-system", "0 3 * * *", async () => {
     const ticketsService = Container.get(GSTicketsService);
     const logger: Logger = Container.get("logger");

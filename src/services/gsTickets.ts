@@ -26,13 +26,17 @@ export default class GSTicketsService {
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
     const balances: userBalance[] = rows.map((row) => {
-      const {usuario: user, tickets} = row as unknown as DBInput
+      const { usuario: user, tickets } = row as unknown as DBInput;
       return { user, tickets: +tickets };
     });
     return balances;
   }
 
-  public async transferTickets(from: string, to: string, tickets: number) {
+  public async transferTickets(
+    from: string,
+    to: string,
+    tickets: number
+  ): Promise<void> {
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
 
@@ -59,18 +63,17 @@ export default class GSTicketsService {
     await sheet.saveUpdatedCells();
   }
 
-  public async balanceSystem() {
+  public async balanceSystem(): Promise<void> {
     const balances = await this.getTickets();
     const systemBalance = balances.filter((e) => e.user == "System")[0];
     const usersBalance = balances.filter((e) => e.user !== "System");
+    const nUsers = usersBalance.length;
 
-    if (systemBalance.tickets <= -3) {
-      const distribute = Math.floor(Math.abs(systemBalance.tickets) / 3);
+    if (systemBalance.tickets <= -nUsers) {
+      const distribute = Math.floor(Math.abs(systemBalance.tickets) / nUsers);
       this.logger.info(`Distributing ${distribute} tickets`);
       if (distribute === 0) {
-        this.logger.info(
-          `No tickets to distribute (${JSON.stringify(systemBalance)})`
-        );
+        this.logger.info(`No tickets to distribute (${JSON.stringify(systemBalance)})`);
         return;
       }
 

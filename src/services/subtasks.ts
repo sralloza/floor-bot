@@ -25,15 +25,11 @@ export default class SubTasksService {
     return VALID_SUBTASKS;
   }
 
-  public async processSubtask(subtask: Subtask, telegramID: number) {
+  public async processSubtask(subtask: Subtask, telegramID: number): Promise<void> {
     const user = await this.userService.getUserByIdOrError(telegramID);
     const rate = await this.exchangeRateService.getRateByConcept(subtask);
 
-    await this.ticketsService.transferTickets(
-      "System",
-      user.username,
-      rate.tickets
-    );
+    await this.ticketsService.transferTickets("System", user.username, rate.tickets);
 
     const t: Transaction = {
       timestamp: new Date(),
@@ -41,7 +37,7 @@ export default class SubTasksService {
       tickets: rate.tickets,
       userFrom: "System",
       userTo: user.username,
-      week: 0,
+      week: 0
     };
     await this.transactionsService.createTransaction(t);
   }

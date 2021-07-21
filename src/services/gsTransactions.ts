@@ -40,7 +40,7 @@ export default class GSTransactionsService {
         usuarioDestino: userTo,
         tarea: task,
         semana: week,
-        tickets,
+        tickets
       } = row as unknown as DBInput;
       const timestamp = new Date(Date.parse(marcaTemporal));
       return {
@@ -49,7 +49,7 @@ export default class GSTransactionsService {
         userTo,
         task,
         week: +week,
-        tickets: +tickets,
+        tickets: +tickets
       };
     });
     return transactions;
@@ -63,7 +63,7 @@ export default class GSTransactionsService {
       usuarioDestino: t.userTo,
       tarea: t.task,
       semana: t.week.toString(),
-      tickets: t.tickets.toString(),
+      tickets: t.tickets.toString()
     };
     await sheet.addRow(newRow as any);
   }
