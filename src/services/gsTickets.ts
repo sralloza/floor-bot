@@ -1,4 +1,6 @@
+import axios from "axios";
 import { GoogleSpreadsheet } from "google-spreadsheet";
+import tableToLatex from "make-latex";
 import { Inject, Service } from "typedi";
 import { Logger } from "winston";
 import settings from "../config";
@@ -16,6 +18,13 @@ interface DBInput {
   cocina: string;
   salón: string;
   baños: string;
+}
+
+interface FormattedDBInput {
+  usuario: string;
+  cocina: number;
+  salón: number;
+  baños: number;
 }
 
 type _Mapper = { [key in TaskType]: number };
@@ -75,5 +84,51 @@ export default class GSTicketsService {
     if (!validTo) throw new Error("To invalid");
 
     await sheet.saveUpdatedCells();
+  }
+
+  public async getTicketsAsTable(): Promise<string> {
+    const tickets = await this.getTickets();
+    const translatedTickets: FormattedDBInput[] = tickets.map((ticket) => {
+      return {
+        usuario: ticket.user,
+        cocina: ticket.kitchen,
+        baños: ticket.bathrooms,
+        salón: ticket.livingRoom
+      };
+    });
+    const latexTable = tableToLatex(translatedTickets);
+    const regex = /\\begin{tabular}{c+}\s([{}\s&\\\-\wñáéíóú]+)\\end{tabular}/;
+    const match = regex.exec(latexTable);
+    if (!match) throw new Error(latexTable);
+
+    let filteredTable = `
+    \\begin{tabular}{cccc}
+    \\hline
+    ${match[1]}
+    \\hline
+    \\end{tabular}
+    `;
+    filteredTable = filteredTable
+      .replace("á", "\\'{a}")
+      .replace("é", "\\'{e}")
+      .replace("í", "\\'{i}")
+      .replace("ó", "\\'{o}")
+      .replace("ú", "\\'{u}")
+      .replace("ñ", "\\~{n}");
+
+    const response = await axios.post(
+      "http://latex2png.com/api/convert",
+      {
+        auth: { user: "guest", password: "guest" },
+        latex: filteredTable,
+        resolution: 600,
+        color: "000000"
+      },
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    );
+    if (response.data.url === undefined) {
+      throw new Error("Invalid image generation");
+    }
+    return "http://latex2png.com" + response.data.url;
   }
 }

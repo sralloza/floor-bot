@@ -21,11 +21,11 @@ export default async ({ app, bot }: Args): Promise<void> => {
   await dependencyInjector();
   Logger.info("Dependency Injector loaded");
 
-  botLoader(bot);
-  Logger.info("Telegram Bot loaded");
-
   await spreadsheetsLoader();
   Logger.info("Spreadsheets loaded");
+
+  botLoader(bot);
+  Logger.info("Telegram Bot loaded");
 
   expressLoader(app);
   Logger.info("Express loaded");

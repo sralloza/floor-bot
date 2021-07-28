@@ -8,6 +8,7 @@ let HELP = `
 - /help - muestra este mensaje
 - /start - muestra unas instrucciones para empezar
 - /registro - registra al usuario
+- /tickets - muestra los tickets de todos los usuarios
 - /completar_tarea - marcar tarea semanal como completada
 - /transferir - pide a otro usuario una transferencia
 - /version - muestra la versión del bot
