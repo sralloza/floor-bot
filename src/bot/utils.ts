@@ -1,5 +1,6 @@
 import { Markup, Telegraf } from "telegraf";
-import { Container } from "winston";
+import { Container } from "typedi";
+import { Logger } from "winston";
 import { version } from "../../package.json";
 
 let HELP = `
@@ -47,7 +48,8 @@ export default (bot: Telegraf): void => {
   });
 
   bot.on("text", (ctx) => {
-    const logger = Container.get("logger");
+    const logger: Logger = Container.get("logger");
     logger.info(ctx.update.message.chat);
+    ctx.reply("No estaba esperando ninguna respuesta.")
   });
 };
