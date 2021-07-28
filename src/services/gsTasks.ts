@@ -224,14 +224,9 @@ export default class GSTasksService {
     const lastTask = currentTasks[currentTasks.length - 1];
     const nextWeek = lastTask.week + 1;
 
-    const lastUsers = [
-      lastTask.bathrooms.user,
-      lastTask.kitchen.user,
-      lastTask.livingRoom.user
-    ];
     const newUsers = this.arraysService.rotate(
       usernames,
-      (nextWeek - 1) % lastUsers.length
+      (nextWeek - 1) % users.length
     );
     const task: WeeklyTask = {
       week: nextWeek,
