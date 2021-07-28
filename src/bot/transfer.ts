@@ -20,7 +20,7 @@ export default (bot: Telegraf): void => {
     if (!users.length)
       return ctx.reply("No hay usuarios registrados para realizar la transferencia");
 
-    const tasks = await tasksService.getUserActiveAssignedTasks(user.username);
+    const tasks = await tasksService.getUserRemainingTasks(user.username);
     if (!tasks.length)
       return ctx.reply("No tienes ninguna tarea activa para transferir");
 
@@ -49,7 +49,7 @@ export default (bot: Telegraf): void => {
     const user = await userService.getUserByIdOrError(
       ctx.update.callback_query.from.id
     );
-    const tasks = await tasksService.getUserActiveAssignedTasks(user.username);
+    const tasks = await tasksService.getUserRemainingTasks(user.username);
 
     if (!tasks.length) return ctx.editMessageText("No tienes ninguna tarea activa");
 

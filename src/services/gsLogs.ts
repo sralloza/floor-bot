@@ -13,7 +13,7 @@ export default class GSLogsService {
   ) {}
 
   public async logMessage(message: string): Promise<void> {
-    const sheet = this.doc.sheetsByTitle["Logs"];
+    const sheet = this.doc.sheetsById[this.sheetID];
     await sheet.addRow([new Date().toJSON(), message]);
   }
 }

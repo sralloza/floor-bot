@@ -9,7 +9,7 @@ export default (bot: Telegraf): void => {
     const userService = Container.get(GSUsersService);
     const tasksService = Container.get(GSTasksService);
     const user = await userService.getUserByIdOrError(ctx.update.message.from.id);
-    const tasks = await tasksService.getUserActiveAssignedTasks(user.username);
+    const tasks = await tasksService.getUserRemainingTasks(user.username);
 
     const keyboardOptions = [
       ...tasks.map((x) => [
@@ -36,7 +36,7 @@ export default (bot: Telegraf): void => {
     const taskType = ctx.match[2];
 
     try {
-      await tasksService.finishTask(user.username, week, taskType as TaskType);
+      await tasksService.completeTask(user.username, week, taskType as TaskType);
     } catch (error) {
       await ctx.answerCbQuery();
       return ctx.editMessageText(error.toString());

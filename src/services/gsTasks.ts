@@ -3,36 +3,38 @@ import { Telegraf } from "telegraf";
 import Container, { Inject, Service } from "typedi";
 import { Logger } from "winston";
 import settings from "../config";
+import ArraysService from "./arrays";
+import CellsService from "./cells";
 import GSUsersService from "./gsUsers";
 
-interface AssignedTask {
+export interface WeeklyTask {
   week: number;
   bathrooms: string;
   livingRoom: string;
   kitchen: string;
 }
 
-interface AdvancedSingleTask {
+export interface StatefulTask {
   user: string;
   done: boolean;
 }
 
-interface AdvancedAssignedTask {
+export interface WeeklyStatefulTask {
   week: number;
-  bathrooms: AdvancedSingleTask;
-  livingRoom: AdvancedSingleTask;
-  kitchen: AdvancedSingleTask;
+  bathrooms: StatefulTask;
+  livingRoom: StatefulTask;
+  kitchen: StatefulTask;
 }
 
 export type TaskType = "Bathroom" | "LivingRoom" | "Kitchen";
 
-interface UserTask {
+export interface UserTask {
   week: number;
   taskName: string;
   taskType: TaskType;
 }
 
-interface DBInput {
+export interface DBIO {
   semana: number;
   baños: string;
   salón: string;
@@ -46,45 +48,51 @@ export default class GSTasksService {
   constructor(
     @Inject("logger") private logger: Logger,
     @Inject("doc") private doc: GoogleSpreadsheet,
-    @Inject() private usersService: GSUsersService
+    @Inject() private usersService: GSUsersService,
+    @Inject() private cellsService: CellsService,
+    @Inject() private arraysService: ArraysService
   ) {}
 
-  private processSingleTaskCell(cell: GoogleSpreadsheetCell): AdvancedSingleTask {
-    const style = cell.effectiveFormat.backgroundColor;
-    const done = !(style.red === 1 && style.green === 1 && style.blue === 1);
-    const user = String(cell.value);
-    return { user, done };
-  }
-
-  private setGreenBackground(cell: GoogleSpreadsheetCell) {
-    cell.backgroundColor = { red: 0, green: 1, blue: 0, alpha: 1 };
-  }
-  private setWhiteBackground(cell: GoogleSpreadsheetCell) {
-    cell.backgroundColor = { red: 1, green: 1, blue: 1, alpha: 1 };
-  }
-
-  private getBackground(cell: GoogleSpreadsheetCell): "White" | "Green" {
-    const { done } = this.processSingleTaskCell(cell);
-    return done ? "Green" : "White";
-  }
-
-  public async createAssignedTask(assignedTask: AssignedTask): Promise<void> {
+  public async createWeeklyTask(task: WeeklyTask): Promise<void> {
     const sheet = this.doc.sheetsById[this.sheetID];
-    const newRow: DBInput = {
-      semana: assignedTask.week,
-      baños: assignedTask.bathrooms,
-      salón: assignedTask.livingRoom,
-      cocina: assignedTask.kitchen
+    const newRow: DBIO = {
+      semana: task.week,
+      baños: task.bathrooms,
+      salón: task.livingRoom,
+      cocina: task.kitchen
     };
     await sheet.addRow(newRow as any);
     this.logger.info(`Created task: ${JSON.stringify(newRow)}`);
   }
 
-  public async getUserActiveAssignedTasks(username: string): Promise<UserTask[]> {
-    const assignedTasks = await this.getAssignedTasks();
+  public async getWeeklyTasks(): Promise<WeeklyStatefulTask[]> {
+    const sheet = this.doc.sheetsById[this.sheetID];
+    const rows = await sheet.getRows();
+    const data: WeeklyStatefulTask[] = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      await sheet.loadCells(row.a1Range.split("!")[1]);
+
+      const week = sheet.getCell(i + 1, 0);
+      const bathrooms = sheet.getCell(i + 1, 1);
+      const livingRoom = sheet.getCell(i + 1, 2);
+      const kitchen = sheet.getCell(i + 1, 3);
+      data.push({
+        week: +week.value,
+        bathrooms: this.cellsService.processTaskCell(bathrooms),
+        livingRoom: this.cellsService.processTaskCell(livingRoom),
+        kitchen: this.cellsService.processTaskCell(kitchen)
+      });
+    }
+    return data;
+  }
+
+  public async getUserRemainingTasks(username: string): Promise<UserTask[]> {
+    const tasks = await this.getWeeklyTasks();
     const filteredTasks: UserTask[] = [];
 
-    for (const task of assignedTasks) {
+    for (const task of tasks) {
       if (task.bathrooms.user === username && !task.bathrooms.done)
         filteredTasks.push({
           week: task.week,
@@ -108,30 +116,7 @@ export default class GSTasksService {
     return filteredTasks;
   }
 
-  public async getAssignedTasks(): Promise<AdvancedAssignedTask[]> {
-    const sheet = this.doc.sheetsById[this.sheetID];
-    const rows = await sheet.getRows();
-    const data: AdvancedAssignedTask[] = [];
-
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i];
-      await sheet.loadCells(row.a1Range.split("!")[1]);
-
-      const week = sheet.getCell(i + 1, 0);
-      const bathrooms = sheet.getCell(i + 1, 1);
-      const livingRoom = sheet.getCell(i + 1, 2);
-      const kitchen = sheet.getCell(i + 1, 3);
-      data.push({
-        week: +week.value,
-        bathrooms: this.processSingleTaskCell(bathrooms),
-        livingRoom: this.processSingleTaskCell(livingRoom),
-        kitchen: this.processSingleTaskCell(kitchen)
-      });
-    }
-    return data;
-  }
-
-  public async finishTask(
+  public async completeTask(
     username: string,
     week: number,
     taskType: TaskType
@@ -154,7 +139,7 @@ export default class GSTasksService {
     else if (taskType === "LivingRoom") cell = sheet.getCell(rowIndex, 2);
     else cell = sheet.getCell(rowIndex, 3);
 
-    if (this.getBackground(cell) === "Green") {
+    if (this.cellsService.getTaskCellBackgroud(cell) === "Green") {
       this.logger.error("Already finished");
       this.logger.error({ week, username, taskType, cell });
       throw new Error("Already finised");
@@ -165,11 +150,11 @@ export default class GSTasksService {
       throw new Error("Cell is not owned by user");
     }
 
-    this.setGreenBackground(cell);
+    this.cellsService.setGreenBackground(cell);
     await sheet.saveUpdatedCells();
   }
 
-  public async transfer(
+  public async transferTask(
     usernameTo: string,
     week: number,
     taskType: TaskType
@@ -196,15 +181,7 @@ export default class GSTasksService {
     await sheet.saveUpdatedCells();
   }
 
-  private rotate<T>(array: T[], times = 1): T[] {
-    while (times--) {
-      const temp = array.shift() as T;
-      array.push(temp);
-    }
-    return array;
-  }
-
-  private async notifyUsers(task: AssignedTask) {
+  private async notifyUsers(task: WeeklyTask) {
     const preMsg = "Tareas repartidas. Tu tarea semanal es: ";
     const bot: Telegraf = Container.get("bot");
     const logger: Logger = Container.get("logger");
@@ -228,18 +205,18 @@ export default class GSTasksService {
   }
 
   public async createWeeklyTasks(notifyUsers = false): Promise<void> {
-    const currentTasks = await this.getAssignedTasks();
+    const currentTasks = await this.getWeeklyTasks();
     const users = await this.usersService.getUsers();
     const usernames = users.map((e) => e.username);
 
     if (!currentTasks.length) {
-      const task: AssignedTask = {
+      const task: WeeklyTask = {
         week: 1,
         bathrooms: usernames[0],
         livingRoom: usernames[1],
         kitchen: usernames[2]
       };
-      await this.createAssignedTask(task);
+      await this.createWeeklyTask(task);
       if (notifyUsers) await this.notifyUsers(task);
       return;
     }
@@ -247,19 +224,17 @@ export default class GSTasksService {
     const lastTask = currentTasks[currentTasks.length - 1];
     const nextWeek = lastTask.week + 1;
 
-    const lastUsers = [
-      lastTask.bathrooms.user,
-      lastTask.kitchen.user,
-      lastTask.livingRoom.user
-    ];
-    const newUsers = this.rotate(usernames, (nextWeek - 1) % lastUsers.length);
-    const task: AssignedTask = {
+    const newUsers = this.arraysService.rotate(
+      usernames,
+      (nextWeek - 1) % users.length
+    );
+    const task: WeeklyTask = {
       week: nextWeek,
       bathrooms: newUsers[0],
       livingRoom: newUsers[1],
       kitchen: newUsers[2]
     };
-    await this.createAssignedTask(task);
+    await this.createWeeklyTask(task);
     if (notifyUsers) await this.notifyUsers(task);
   }
 }

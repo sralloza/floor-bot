@@ -2,16 +2,29 @@ import { GoogleSpreadsheet } from "google-spreadsheet";
 import { Inject, Service } from "typedi";
 import { Logger } from "winston";
 import settings from "../config";
+import { TaskType } from "./gsTasks";
 
 interface userBalance {
   user: string;
-  tickets: number;
+  kitchen: number;
+  livingRoom: number;
+  bathrooms: number;
 }
 
 interface DBInput {
   usuario: string;
-  tickets: string;
+  cocina: string;
+  salón: string;
+  baños: string;
 }
+
+type _Mapper = { [key in TaskType]: number };
+
+const TASK_TYPE_TO_COLUMN: _Mapper = {
+  Kitchen: 1,
+  Bathroom: 2,
+  LivingRoom: 3
+};
 
 @Service()
 export default class GSTicketsService {
@@ -26,8 +39,8 @@ export default class GSTicketsService {
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
     const balances: userBalance[] = rows.map((row) => {
-      const { usuario: user, tickets } = row as unknown as DBInput;
-      return { user, tickets: +tickets };
+      const { usuario: user, cocina, salón, baños } = row as unknown as DBInput;
+      return { user, kitchen: +cocina, livingRoom: +salón, bathrooms: +baños };
     });
     return balances;
   }
@@ -35,6 +48,7 @@ export default class GSTicketsService {
   public async transferTickets(
     from: string,
     to: string,
+    task: TaskType,
     tickets: number
   ): Promise<void> {
     const sheet = this.doc.sheetsById[this.sheetID];
@@ -49,11 +63,11 @@ export default class GSTicketsService {
       const user = sheet.getCell(i + 1, 0);
       if (user.value == from) {
         validFrom = true;
-        const balanceCell = sheet.getCell(i + 1, 1);
+        const balanceCell = sheet.getCell(i + 1, TASK_TYPE_TO_COLUMN[task]);
         balanceCell.value = +balanceCell.value - tickets;
       } else if (user.value == to) {
         validTo = true;
-        const balanceCell = sheet.getCell(i + 1, 1);
+        const balanceCell = sheet.getCell(i + 1, TASK_TYPE_TO_COLUMN[task]);
         balanceCell.value = +balanceCell.value + tickets;
       }
     }
@@ -61,25 +75,5 @@ export default class GSTicketsService {
     if (!validTo) throw new Error("To invalid");
 
     await sheet.saveUpdatedCells();
-  }
-
-  public async balanceSystem(): Promise<void> {
-    const balances = await this.getTickets();
-    const systemBalance = balances.filter((e) => e.user == "System")[0];
-    const usersBalance = balances.filter((e) => e.user !== "System");
-    const nUsers = usersBalance.length;
-
-    if (systemBalance.tickets <= -nUsers) {
-      const distribute = Math.floor(Math.abs(systemBalance.tickets) / nUsers);
-      this.logger.info(`Distributing ${distribute} tickets`);
-      if (distribute === 0) {
-        this.logger.info(`No tickets to distribute (${JSON.stringify(systemBalance)})`);
-        return;
-      }
-
-      for (const balance of usersBalance) {
-        await this.transferTickets("System", balance.user, -distribute);
-      }
-    }
   }
 }
