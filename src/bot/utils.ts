@@ -9,7 +9,6 @@ let HELP = `
 - /registro - registra al usuario
 - /completar_tarea - marcar tarea semanal como completada
 - /transferir - pide a otro usuario una transferencia
-- /subtareas - completar subtareas (basura, lavavajillas)
 - /version - muestra la versión del bot
 `;
 
