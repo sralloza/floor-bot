@@ -1,7 +1,6 @@
 import { Inject, Service } from "typedi";
 import { Logger } from "winston";
 import settings from "../config";
-import GSExchangeRateService from "./gsExchangeRate";
 import GSTasksService, { TaskType } from "./gsTasks";
 import GSTicketsService from "./gsTickets";
 import GSTransactionsService, { Transaction } from "./gsTransactions";
@@ -14,7 +13,6 @@ export default class TransferService {
     @Inject("logger") private logger: Logger,
     @Inject() private tasksService: GSTasksService,
     @Inject() private ticketsService: GSTicketsService,
-    @Inject() private exchangeRatesService: GSExchangeRateService,
     @Inject() private transactionService: GSTransactionsService
   ) {}
 
@@ -24,23 +22,20 @@ export default class TransferService {
     week: number,
     taskType: TaskType
   ): Promise<void> {
-    // 1. Get exchange rate of task
-    const exchangeRate = await this.exchangeRatesService.getRateByTaskType(taskType);
-
-    // 2. Transfer tickets
-    await this.ticketsService.transferTickets(userFrom, userTo, exchangeRate.tickets);
-
-    // 3. Transfer task
+    // 1. Transfer task
     await this.tasksService.transferTask(userTo, week, taskType);
 
-    // 4. Register transaction
+    // 2. Transfer tickets
+    await this.ticketsService.transferTickets(userFrom, userTo, taskType, 1);
+
+    // 3. Register transaction
     const t: Transaction = {
       timestamp: new Date(),
       userFrom,
       userTo,
       task: taskType,
       week: week,
-      tickets: exchangeRate.tickets
+      tickets: 1
     };
     await this.transactionService.createTransaction(t);
   }
