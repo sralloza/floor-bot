@@ -8,10 +8,10 @@ export default class CellsService {
 
   public processTaskCell(cell: GoogleSpreadsheetCell): StatefulTask {
     const style = cell.effectiveFormat.backgroundColor;
-    const { red, green, blue } = style;
+    const { red = 0, green = 0, blue = 0 } = style;
     const done = red === 0 && green === 1 && blue === 0;
     if (!done)
-      if (red !== 0 || green !== 0 || blue !== 0)
+      if (red !== 1 || green !== 1 || blue !== 1)
         throw new Error("Cell's background is neither green nor white");
 
     return { user: cell.value.toString(), done };
