@@ -35,7 +35,6 @@ export default class TransferService {
       userTo,
       task: taskType,
       week: week,
-      tickets: 1
     };
     await this.transactionService.createTransaction(t);
   }
