@@ -25,31 +25,31 @@ const START =
 export const CANCEL_OPTION = [Markup.button.callback("Cancelar", "CANCEL")];
 
 export default (bot: Telegraf): void => {
-  bot.command("start", (ctx) => {
-    ctx.replyWithMarkdownV2(START);
+  bot.command("start", async (ctx) => {
+    await ctx.replyWithMarkdownV2(START);
   });
 
-  bot.command("ayuda", (ctx) => {
-    ctx.replyWithMarkdownV2(HELP);
+  bot.command("ayuda", async (ctx) => {
+    await ctx.replyWithMarkdownV2(HELP);
   });
 
-  bot.command("help", (ctx) => {
-    ctx.replyWithMarkdownV2(HELP);
+  bot.command("help", async (ctx) => {
+    await ctx.replyWithMarkdownV2(HELP);
   });
 
-  bot.command("version", (ctx) => {
+  bot.command("version", async (ctx) => {
     const parsedVersion = version.replace(/\./g, "\\.");
-    ctx.replyWithMarkdownV2(`Versión actual: _*v${parsedVersion}*_`);
+    await ctx.replyWithMarkdownV2(`Versión actual: _*v${parsedVersion}*_`);
   });
 
-  bot.action(/CANCEL/, (ctx) => {
-    ctx.editMessageReplyMarkup({ inline_keyboard: [] });
-    ctx.reply("Operación cancelada.");
+  bot.action(/CANCEL/, async (ctx) => {
+    await ctx.editMessageReplyMarkup({ inline_keyboard: [] });
+    await ctx.reply("Operación cancelada.");
   });
 
-  bot.on("text", (ctx) => {
+  bot.on("text", async (ctx) => {
     const logger: Logger = Container.get("logger");
-    logger.info(ctx.update.message.chat);
-    ctx.reply("No estaba esperando ninguna respuesta.")
+    logger.info(JSON.stringify(ctx.update.message.chat));
+    await ctx.reply("No estaba esperando ninguna respuesta.")
   });
 };
