@@ -29,9 +29,9 @@ COPY . .
 
 EXPOSE 80
 
-RUN tsc
-
 ENV NODE_ENV production
+
+RUN tsc
 
 RUN npm ci
 
