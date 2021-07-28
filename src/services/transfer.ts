@@ -22,11 +22,11 @@ export default class TransferService {
     week: number,
     taskType: TaskType
   ): Promise<void> {
-    // 1. Transfer task
-    await this.tasksService.transferTask(userTo, week, taskType);
-
-    // 2. Transfer tickets
+    // 1. Transfer tickets
     await this.ticketsService.transferTickets(userFrom, userTo, taskType, 1);
+
+    // 2. Transfer task
+    await this.tasksService.transferTask(userTo, week, taskType);
 
     // 3. Register transaction
     const t: Transaction = {
