@@ -1,0 +1,56 @@
+# This is a basic workflow to help you get started with Actions
+
+name: checks
+
+# Controls when the workflow will run
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  run-version-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // console.log(JSON.stringify(context.payload.pull_request))
+            check = async () => {
+              const response = await github.pulls.listFiles({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                per_page: 100
+              });
+
+              const filenames = response.data.map(e => e.filename)
+              console.log(filenames)
+
+              let msg = "Version modified"
+              let status = filenames.includes("package.json") ? "success" : "failure"
+              if (status === "failure")
+                msg = "You need to update the version in package.json"
+              else {
+                const packagePatch = response.data.filter(e => e.filename === "package.json")[0].patch
+                const updated =
+                  packagePatch.match(/\-\s+"version":/) &&
+                  packagePatch.match(/\+\s+"version":/);
+
+                  if (!updated){
+                  status = "failure"
+                  msg = "Package.json modified but version not updated"
+                }
+              }
+
+              await github.repos.createCommitStatus({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                sha: context.payload.pull_request.head.sha,
+                state: status,
+                context: 'allobot/version-update',
+                description: msg
+              });
+            }
+
+            check();
