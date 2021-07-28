@@ -6,12 +6,12 @@ import { TaskType } from "./gsTasks";
 
 export type Concept = "cocina" | "baños" | "salón" | "basura" | "lavavajillas";
 
-interface ExchangeRate {
+export interface ExchangeRate {
   concept: string;
   tickets: number;
 }
 
-interface DBInput {
+export interface DBInput {
   concepto: Concept;
   tickets: string;
 }

@@ -31,7 +31,7 @@ export default class TransferService {
     await this.ticketsService.transferTickets(userFrom, userTo, exchangeRate.tickets);
 
     // 3. Transfer task
-    await this.tasksService.transfer(userTo, week, taskType);
+    await this.tasksService.transferTask(userTo, week, taskType);
 
     // 4. Register transaction
     const t: Transaction = {
