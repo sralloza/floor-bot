@@ -65,11 +65,12 @@ export default class GSTasksService {
     };
     await sheet.addRow(newRow as any);
     this.logger.info(`Created task: ${JSON.stringify(newRow)}`);
+    await this.redisService.delTasks();
   }
 
   public async getWeeklyTasks(): Promise<WeeklyStatefulTask[]> {
-    const redisMemory = await this.redisService.getTasks()
-    if (redisMemory) return redisMemory
+    const redisMemory = await this.redisService.getTasks();
+    if (redisMemory) return redisMemory;
 
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
@@ -91,7 +92,7 @@ export default class GSTasksService {
       });
     }
 
-    await this.redisService.setTasks(data)
+    await this.redisService.setTasks(data);
     return data;
   }
 
@@ -159,6 +160,7 @@ export default class GSTasksService {
 
     this.cellsService.setGreenBackground(cell);
     await sheet.saveUpdatedCells();
+    await this.redisService.delTasks();
   }
 
   public async transferTask(
@@ -186,6 +188,7 @@ export default class GSTasksService {
 
     cell.value = usernameTo;
     await sheet.saveUpdatedCells();
+    await this.redisService.delTasks();
   }
 
   private async notifyUsers(task: WeeklyTask) {

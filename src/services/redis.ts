@@ -2,11 +2,13 @@ import { Inject, Service } from "typedi";
 import { RedisObj } from "../loaders/dependencyInjector";
 import { WeeklyStatefulTask } from "./gsTasks";
 import { userBalance } from "./gsTickets";
+import { Transaction } from "./gsTransactions";
 
 const REDIS_KEYS_MAPPER = {
   tasks: "tasks",
   tickets: "tickets",
-  ticketsTableURL: "ticketsTableURL"
+  ticketsTableURL: "ticketsTableURL",
+  transactions: "transactions"
 };
 
 @Service()
@@ -22,6 +24,9 @@ export default class RedisService {
   public async setTasks(tasks: WeeklyStatefulTask[]): Promise<void> {
     await this.redis.setex(REDIS_KEYS_MAPPER.tasks, 5 * 60, JSON.stringify(tasks));
   }
+  public async delTasks(): Promise<void> {
+    await this.redis.del(REDIS_KEYS_MAPPER.tasks);
+  }
 
   // Tickets
   public async getTickets(): Promise<userBalance[] | null> {
@@ -31,7 +36,10 @@ export default class RedisService {
   }
   public async setTickets(tickets: userBalance[]): Promise<void> {
     await this.redis.setex(REDIS_KEYS_MAPPER.tickets, 5 * 60, JSON.stringify(tickets));
-    await this.redis.del(REDIS_KEYS_MAPPER.ticketsTableURL);
+    await this.delTicketsTableURL();
+  }
+  public async delTickets(): Promise<void> {
+    await this.redis.del(REDIS_KEYS_MAPPER.tickets);
   }
 
   public async getTicketsTableURL(): Promise<string | null> {
@@ -39,5 +47,25 @@ export default class RedisService {
   }
   public async setTicketsTableURL(tableURL: string): Promise<void> {
     await this.redis.setex(REDIS_KEYS_MAPPER.ticketsTableURL, 5 * 60, tableURL);
+  }
+  public async delTicketsTableURL(): Promise<void> {
+    await this.redis.del(REDIS_KEYS_MAPPER.ticketsTableURL);
+  }
+
+  // Transactions
+  public async getTransactions(): Promise<Transaction[] | null> {
+    const result = await this.redis.get(REDIS_KEYS_MAPPER.transactions);
+    if (result) return JSON.parse(result);
+    return null;
+  }
+  public async setTransactions(transactions: Transaction[]): Promise<void> {
+    await this.redis.setex(
+      REDIS_KEYS_MAPPER.transactions,
+      5 * 60,
+      JSON.stringify(transactions)
+    );
+  }
+  public async delTransactions(): Promise<void> {
+    await this.redis.del(REDIS_KEYS_MAPPER.transactions);
   }
 }
