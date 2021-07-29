@@ -47,8 +47,8 @@ export default class GSTicketsService {
   ) {}
 
   public async getTickets(): Promise<userBalance[]> {
-    const redisMemory = await this.redis.getTickets()
-    if (redisMemory) return redisMemory
+    const redisMemory = await this.redis.getTickets();
+    if (redisMemory) return redisMemory;
 
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
@@ -57,7 +57,7 @@ export default class GSTicketsService {
       return { user, kitchen: +cocina, livingRoom: +salón, bathrooms: +baños };
     });
 
-    await this.redis.setTickets(balances)
+    await this.redis.setTickets(balances);
     return balances;
   }
 
@@ -141,7 +141,7 @@ export default class GSTicketsService {
     }
 
     const newURL = "http://latex2png.com" + response.data.url;
-    await this.redis.setTicketsTableURL(newURL)
+    await this.redis.setTicketsTableURL(newURL);
     return newURL;
   }
 }
