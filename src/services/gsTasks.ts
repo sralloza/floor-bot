@@ -6,6 +6,7 @@ import settings from "../config";
 import ArraysService from "./arrays";
 import CellsService from "./cells";
 import GSUsersService from "./gsUsers";
+import RedisService from "./redis";
 
 export interface WeeklyTask {
   week: number;
@@ -50,7 +51,8 @@ export default class GSTasksService {
     @Inject("doc") private doc: GoogleSpreadsheet,
     @Inject() private usersService: GSUsersService,
     @Inject() private cellsService: CellsService,
-    @Inject() private arraysService: ArraysService
+    @Inject() private arraysService: ArraysService,
+    @Inject() private redisService: RedisService
   ) {}
 
   public async createWeeklyTask(task: WeeklyTask): Promise<void> {
@@ -63,9 +65,13 @@ export default class GSTasksService {
     };
     await sheet.addRow(newRow as any);
     this.logger.info(`Created task: ${JSON.stringify(newRow)}`);
+    await this.redisService.delTasks();
   }
 
   public async getWeeklyTasks(): Promise<WeeklyStatefulTask[]> {
+    const redisMemory = await this.redisService.getTasks();
+    if (redisMemory) return redisMemory;
+
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
     const data: WeeklyStatefulTask[] = [];
@@ -85,6 +91,8 @@ export default class GSTasksService {
         kitchen: this.cellsService.processTaskCell(kitchen)
       });
     }
+
+    await this.redisService.setTasks(data);
     return data;
   }
 
@@ -152,6 +160,7 @@ export default class GSTasksService {
 
     this.cellsService.setGreenBackground(cell);
     await sheet.saveUpdatedCells();
+    await this.redisService.delTasks();
   }
 
   public async transferTask(
@@ -179,6 +188,7 @@ export default class GSTasksService {
 
     cell.value = usernameTo;
     await sheet.saveUpdatedCells();
+    await this.redisService.delTasks();
   }
 
   private async notifyUsers(task: WeeklyTask) {

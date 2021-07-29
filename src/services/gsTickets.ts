@@ -5,8 +5,9 @@ import { Inject, Service } from "typedi";
 import { Logger } from "winston";
 import settings from "../config";
 import { TaskType } from "./gsTasks";
+import RedisService from "./redis";
 
-interface userBalance {
+export interface userBalance {
   user: string;
   kitchen: number;
   livingRoom: number;
@@ -41,16 +42,22 @@ export default class GSTicketsService {
 
   constructor(
     @Inject("logger") private logger: Logger,
+    @Inject() private redis: RedisService,
     @Inject("doc") private doc: GoogleSpreadsheet
   ) {}
 
   public async getTickets(): Promise<userBalance[]> {
+    const redisMemory = await this.redis.getTickets();
+    if (redisMemory) return redisMemory;
+
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
     const balances: userBalance[] = rows.map((row) => {
       const { usuario: user, cocina, salón, baños } = row as unknown as DBInput;
       return { user, kitchen: +cocina, livingRoom: +salón, bathrooms: +baños };
     });
+
+    await this.redis.setTickets(balances);
     return balances;
   }
 
@@ -87,6 +94,9 @@ export default class GSTicketsService {
   }
 
   public async getTicketsAsTable(): Promise<string> {
+    const redisMemory = await this.redis.getTicketsTableURL();
+    if (redisMemory) return redisMemory;
+
     const tickets = await this.getTickets();
     const translatedTickets: FormattedDBInput[] = tickets.map((ticket) => {
       return {
@@ -129,6 +139,9 @@ export default class GSTicketsService {
     if (response.data.url === undefined) {
       throw new Error("Invalid image generation");
     }
-    return "http://latex2png.com" + response.data.url;
+
+    const newURL = "http://latex2png.com" + response.data.url;
+    await this.redis.setTicketsTableURL(newURL);
+    return newURL;
   }
 }
