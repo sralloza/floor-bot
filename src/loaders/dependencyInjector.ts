@@ -18,7 +18,6 @@ export default async (): Promise<void> => {
     LoggerInstance.info("Logger injected into container");
 
     const client = redis.createClient();
-    client.del();
     const redisObj: RedisObj = {
       client: client,
       get: promisify(client.get).bind(client),
