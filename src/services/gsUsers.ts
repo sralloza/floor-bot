@@ -39,7 +39,7 @@ export default class GSUsersService {
       return { username, telegramID: +telegramID };
     });
 
-    this.redisService.setUsers(users);
+    await this.redisService.setUsers(users);
     return users;
   }
 
@@ -95,6 +95,6 @@ export default class GSUsersService {
 
     user_row.telegramID = telegramID;
     await user_row.save();
-    this.redisService.delUsers();
+    await this.redisService.delUsers();
   }
 }
