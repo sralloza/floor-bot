@@ -2,6 +2,7 @@ import { GoogleSpreadsheet } from "google-spreadsheet";
 import { Inject, Service } from "typedi";
 import { Logger } from "winston";
 import settings from "../config";
+import RedisService from "./redis";
 
 export class TelegramIDAlreadySetError extends Error {}
 
@@ -23,16 +24,22 @@ export default class GSUsersService {
 
   constructor(
     @Inject("logger") private logger: Logger,
-    @Inject("doc") private doc: GoogleSpreadsheet
+    @Inject("doc") private doc: GoogleSpreadsheet,
+    @Inject() private redisService: RedisService
   ) {}
 
   public async getUsers(): Promise<RegisteredUser[]> {
+    const redisMemory = await this.redisService.getUsers();
+    if (redisMemory) return redisMemory;
+
     const sheet = this.doc.sheetsById[this.sheetID];
     const rows = await sheet.getRows();
     const users = rows.map((row) => {
       const { nick: username, telegramID } = row as unknown as DBInput;
       return { username, telegramID: +telegramID };
     });
+
+    this.redisService.setUsers(users);
     return users;
   }
 
@@ -88,5 +95,6 @@ export default class GSUsersService {
 
     user_row.telegramID = telegramID;
     await user_row.save();
+    this.redisService.delUsers();
   }
 }

@@ -3,12 +3,14 @@ import { RedisObj } from "../loaders/dependencyInjector";
 import { WeeklyStatefulTask } from "./gsTasks";
 import { userBalance } from "./gsTickets";
 import { Transaction } from "./gsTransactions";
+import { RegisteredUser } from "./gsUsers";
 
 const REDIS_KEYS_MAPPER = {
   tasks: "tasks",
   tickets: "tickets",
   ticketsTableURL: "ticketsTableURL",
-  transactions: "transactions"
+  transactions: "transactions",
+  users: "users"
 };
 
 @Service()
@@ -67,5 +69,18 @@ export default class RedisService {
   }
   public async delTransactions(): Promise<void> {
     await this.redis.del(REDIS_KEYS_MAPPER.transactions);
+  }
+
+  // Users
+  public async getUsers(): Promise<RegisteredUser[] | null> {
+    const result = await this.redis.get(REDIS_KEYS_MAPPER.users);
+    if (result) return JSON.parse(result);
+    return null;
+  }
+  public async setUsers(users: RegisteredUser[]): Promise<void> {
+    await this.redis.setex(REDIS_KEYS_MAPPER.users, 5 * 60, JSON.stringify(users));
+  }
+  public async delUsers(): Promise<void> {
+    await this.redis.del(REDIS_KEYS_MAPPER.users);
   }
 }
