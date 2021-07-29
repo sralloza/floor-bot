@@ -11,12 +11,15 @@ let HELP = `
 - /tickets - muestra los tickets de todos los usuarios
 - /completar_tarea - marcar tarea semanal como completada
 - /transferir - pide a otro usuario una transferencia
+- /purgar_cache - [ADMIN] limpia la caché
 - /version - muestra la versión del bot
 `;
 
 HELP = HELP.replace(/_/g, "\\_")
   .replace(/-/g, "\\-")
   .replace(/\./g, "\\.")
+  .replace(/\]/g, "\\]")
+  .replace(/\[/g, "\\[")
   .replace(/\(/g, "\\(")
   .replace(/\)/g, "\\)");
 
@@ -51,6 +54,6 @@ export default (bot: Telegraf): void => {
   bot.on("text", async (ctx) => {
     const logger: Logger = Container.get("logger");
     logger.info(JSON.stringify(ctx.update.message.chat));
-    await ctx.reply("No estaba esperando ninguna respuesta.")
+    await ctx.reply("No estaba esperando ninguna respuesta.");
   });
 };

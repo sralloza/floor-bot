@@ -17,6 +17,11 @@ const REDIS_KEYS_MAPPER = {
 export default class RedisService {
   constructor(@Inject("redis") private redis: RedisObj) {}
 
+  // General
+  public async clearCache(): Promise<number> {
+    return await this.redis.del(...Object.keys(REDIS_KEYS_MAPPER));
+  }
+
   // Tasks
   public async getTasks(): Promise<WeeklyStatefulTask[] | null> {
     const result = await this.redis.get(REDIS_KEYS_MAPPER.tasks);
