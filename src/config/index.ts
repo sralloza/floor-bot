@@ -18,6 +18,8 @@ const settings = {
   telegram_token_bot: process.env.TELEGRAM_TOKEN_BOT,
   client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL as string,
   private_key: (process.env.GOOGLE_PRIVATE_KEY as string).replace(/\\n/gm, "\n"),
+  redis_host: process.env.REDIS_HOST || "localhost",
+  redis_port: parseInt(process.env.REDIS_PORT || "6379", 10),
   google_sheets_ids: {
     users: 2084291060,
     tasks: 0,

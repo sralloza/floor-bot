@@ -1,6 +1,7 @@
 import redis from "redis";
 import { Container } from "typedi";
 import { promisify } from "util";
+import settings from "../config";
 import LoggerInstance from "./logger";
 
 export interface RedisObj {
@@ -17,7 +18,10 @@ export default async (): Promise<void> => {
     Container.set("logger", LoggerInstance);
     LoggerInstance.info("Logger injected into container");
 
-    const client = redis.createClient();
+    const client = redis.createClient({
+      host: settings.redis_host,
+      port: settings.redis_port
+    });
     const redisObj: RedisObj = {
       client: client,
       get: promisify(client.get).bind(client),
