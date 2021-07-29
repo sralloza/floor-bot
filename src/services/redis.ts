@@ -29,7 +29,7 @@ export default class RedisService {
     return null;
   }
   public async setTasks(tasks: WeeklyStatefulTask[]): Promise<void> {
-    await this.redis.setex(REDIS_KEYS_MAPPER.tasks, 5 * 60, JSON.stringify(tasks));
+    await this.redis.set(REDIS_KEYS_MAPPER.tasks, JSON.stringify(tasks));
   }
   public async delTasks(): Promise<void> {
     await this.redis.del(REDIS_KEYS_MAPPER.tasks);
@@ -42,7 +42,7 @@ export default class RedisService {
     return null;
   }
   public async setTickets(tickets: userBalance[]): Promise<void> {
-    await this.redis.setex(REDIS_KEYS_MAPPER.tickets, 5 * 60, JSON.stringify(tickets));
+    await this.redis.set(REDIS_KEYS_MAPPER.tickets, JSON.stringify(tickets));
     await this.delTicketsTableURL();
   }
   public async delTickets(): Promise<void> {
@@ -53,7 +53,7 @@ export default class RedisService {
     return await this.redis.get(REDIS_KEYS_MAPPER.ticketsTableURL);
   }
   public async setTicketsTableURL(tableURL: string): Promise<void> {
-    await this.redis.setex(REDIS_KEYS_MAPPER.ticketsTableURL, 5 * 60, tableURL);
+    await this.redis.set(REDIS_KEYS_MAPPER.ticketsTableURL, tableURL);
   }
   public async delTicketsTableURL(): Promise<void> {
     await this.redis.del(REDIS_KEYS_MAPPER.ticketsTableURL);
@@ -66,11 +66,7 @@ export default class RedisService {
     return null;
   }
   public async setTransactions(transactions: Transaction[]): Promise<void> {
-    await this.redis.setex(
-      REDIS_KEYS_MAPPER.transactions,
-      5 * 60,
-      JSON.stringify(transactions)
-    );
+    await this.redis.set(REDIS_KEYS_MAPPER.transactions, JSON.stringify(transactions));
   }
   public async delTransactions(): Promise<void> {
     await this.redis.del(REDIS_KEYS_MAPPER.transactions);
@@ -83,7 +79,7 @@ export default class RedisService {
     return null;
   }
   public async setUsers(users: RegisteredUser[]): Promise<void> {
-    await this.redis.setex(REDIS_KEYS_MAPPER.users, 5 * 60, JSON.stringify(users));
+    await this.redis.set(REDIS_KEYS_MAPPER.users, JSON.stringify(users));
   }
   public async delUsers(): Promise<void> {
     await this.redis.del(REDIS_KEYS_MAPPER.users);
