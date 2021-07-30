@@ -1,10 +1,12 @@
 import express from "express";
 import "reflect-metadata";
 import { Telegraf } from "telegraf";
+import { version } from "../package.json";
 import settings from "./config";
 import Logger from "./loaders/logger";
 
 async function startServer() {
+  Logger.info(`Launching version v${version}`);
   const app = express();
   const token = settings.telegram_token_bot;
   if (token === undefined) throw new Error("BOT_TOKEN must be provided!");
