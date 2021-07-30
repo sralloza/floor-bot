@@ -1,4 +1,3 @@
-import { isCelebrateError } from "celebrate";
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import Container from "typedi";
@@ -28,31 +27,6 @@ export default (app: express.Application): void => {
       return res.status(err.status).json({ detail: err.message }).end();
     }
     return next(err);
-  });
-
-  app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    // If this isn't a Celebrate error, send it to the next error handler
-    if (!isCelebrateError(err)) {
-      return next(err);
-    }
-
-    const logger: Logger = Container.get("service");
-
-    const errors = [];
-    for (const [loc, joiError] of err.details.entries()) {
-      if (joiError.details.length > 1) {
-        logger.error("MORE ERRORS THAN ANTICIPATED: %o", joiError.details);
-      }
-      if (joiError.details[0].path.length > 1) {
-        logger.error("MORE ERRORS THAN ANTICIPATED: %o", joiError.details);
-      }
-
-      const msg = joiError.details[0].message;
-      const param = joiError.details[0].path[0];
-      errors.push({ loc, msg, param });
-    }
-
-    return res.status(422).send({ detail: errors });
   });
 
   app.use((err: HTTPException, req: Request, res: Response, next: NextFunction) => {
