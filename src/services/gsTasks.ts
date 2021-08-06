@@ -250,6 +250,11 @@ export default class GSTasksService {
     if (notifyUsers) await this.notifyUsers(task);
   }
 
+  private taskStatusAsString(task: StatefulTask): string {
+    if (task.done) return `${task.user}`;
+    return `*${task.user}*`;
+  }
+
   public async getTasksAsTable(): Promise<string> {
     const redisMemory = await this.redisService.getTasksTableURL();
     if (redisMemory) return redisMemory;
@@ -258,13 +263,13 @@ export default class GSTasksService {
     const translatedTasks: DBIO[] = tasks.slice(-2).map((task) => {
       return {
         semana: task.week,
-        baños: task.bathrooms.user,
-        cocina: task.kitchen.user,
-        salón: task.livingRoom.user
+        baños: this.taskStatusAsString(task.bathrooms),
+        cocina: this.taskStatusAsString(task.kitchen),
+        salón: this.taskStatusAsString(task.livingRoom)
       };
     });
     const latexTable = tableToLatex(translatedTasks);
-    const regex = /\\begin{tabular}{c+}\s([{}\s&\\\-\wñáéíóú]+)\\end{tabular}/;
+    const regex = /\\begin{tabular}{c+}\s([{}\s&\\\-\wñáéíóú*]+)\\end{tabular}/;
     const match = regex.exec(latexTable);
     if (!match) throw new Error(latexTable);
 
