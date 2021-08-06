@@ -7,6 +7,7 @@ import { RegisteredUser } from "./gsUsers";
 
 const REDIS_KEYS_MAPPER = {
   tasks: "tasks",
+  tasksTableURL: "tasksTableURL",
   tickets: "tickets",
   ticketsTableURL: "ticketsTableURL",
   transactions: "transactions",
@@ -30,9 +31,21 @@ export default class RedisService {
   }
   public async setTasks(tasks: WeeklyStatefulTask[]): Promise<void> {
     await this.redis.set(REDIS_KEYS_MAPPER.tasks, JSON.stringify(tasks));
+    await this.delTasksTableURL();
   }
   public async delTasks(): Promise<void> {
     await this.redis.del(REDIS_KEYS_MAPPER.tasks);
+    await this.delTasksTableURL();
+  }
+
+  public async getTasksTableURL(): Promise<string | null> {
+    return await this.redis.get(REDIS_KEYS_MAPPER.tasksTableURL);
+  }
+  public async setTasksTableURL(tableURL: string): Promise<void> {
+    await this.redis.set(REDIS_KEYS_MAPPER.tasksTableURL, tableURL);
+  }
+  public async delTasksTableURL(): Promise<void> {
+    await this.redis.del(REDIS_KEYS_MAPPER.tasksTableURL);
   }
 
   // Tickets
@@ -47,6 +60,7 @@ export default class RedisService {
   }
   public async delTickets(): Promise<void> {
     await this.redis.del(REDIS_KEYS_MAPPER.tickets);
+    await this.delTicketsTableURL();
   }
 
   public async getTicketsTableURL(): Promise<string | null> {

@@ -1,5 +1,6 @@
 import { Markup, Telegraf } from "telegraf";
 import Container from "typedi";
+import { Logger } from "winston";
 import GSTasksService, { TaskType } from "../services/gsTasks";
 import GSUsersService from "../services/gsUsers";
 import { CANCEL_OPTION } from "./utils";
@@ -44,5 +45,19 @@ export default (bot: Telegraf): void => {
     await ctx.answerCbQuery();
     ctx.editMessageReplyMarkup({ inline_keyboard: [] });
     ctx.reply("Tarea completada con éxito");
+  });
+
+  bot.command("tareas", async (ctx) => {
+    const tasksService = Container.get(GSTasksService);
+    const logger: Logger = Container.get("logger");
+    const imageURL = await tasksService.getTasksAsTable();
+
+    try {
+      await ctx.replyWithPhoto(imageURL);
+    } catch (error) {
+      logger.error(error);
+      await ctx.reply(`Se ha producido el siguiente error: ${error}`);
+      await ctx.reply("Operación cancelada");
+    }
   });
 };
