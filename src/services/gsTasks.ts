@@ -1,4 +1,6 @@
+import axios from "axios";
 import { GoogleSpreadsheet, GoogleSpreadsheetCell } from "google-spreadsheet";
+import tableToLatex from "make-latex";
 import { Telegraf } from "telegraf";
 import Container, { Inject, Service } from "typedi";
 import { Logger } from "winston";
@@ -246,5 +248,57 @@ export default class GSTasksService {
     };
     await this.createWeeklyTask(task);
     if (notifyUsers) await this.notifyUsers(task);
+  }
+
+  public async getTasksAsTable(): Promise<string> {
+    const redisMemory = await this.redisService.getTasksTableURL();
+    if (redisMemory) return redisMemory;
+
+    const tasks = await this.getWeeklyTasks();
+    const translatedTasks: DBIO[] = tasks.slice(-2).map((task) => {
+      return {
+        semana: task.week,
+        baños: task.bathrooms.user,
+        cocina: task.kitchen.user,
+        salón: task.livingRoom.user
+      };
+    });
+    const latexTable = tableToLatex(translatedTasks);
+    const regex = /\\begin{tabular}{c+}\s([{}\s&\\\-\wñáéíóú]+)\\end{tabular}/;
+    const match = regex.exec(latexTable);
+    if (!match) throw new Error(latexTable);
+
+    let filteredTable = `
+    \\begin{tabular}{cccc}
+    \\hline
+    ${match[1]}
+    \\hline
+    \\end{tabular}
+    `;
+    filteredTable = filteredTable
+      .replace("á", "\\'{a}")
+      .replace("é", "\\'{e}")
+      .replace("í", "\\'{i}")
+      .replace("ó", "\\'{o}")
+      .replace("ú", "\\'{u}")
+      .replace("ñ", "\\~{n}");
+
+    const response = await axios.post(
+      "http://latex2png.com/api/convert",
+      {
+        auth: { user: "guest", password: "guest" },
+        latex: filteredTable,
+        resolution: 600,
+        color: "000000"
+      },
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    );
+    if (response.data.url === undefined) {
+      throw new Error("Invalid image generation");
+    }
+
+    const newURL = "http://latex2png.com" + response.data.url;
+    await this.redisService.setTasksTableURL(newURL);
+    return newURL;
   }
 }
