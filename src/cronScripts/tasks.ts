@@ -9,7 +9,7 @@ export default (): void => {
     const logger: Logger = Container.get("logger");
 
     logger.debug("Creating weekly tasks");
-    await tasksService.createWeeklyTasks();
+    await tasksService.createWeeklyTasks(true);
     logger.debug("Weekly tasks created");
   });
 };
