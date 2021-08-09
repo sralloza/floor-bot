@@ -6,7 +6,7 @@ services:
     hostname: redis
     ports:
       - "6379:6379"
-  floor-api:
+  floor-bot:
     build:
       context: .
       dockerfile: Dockerfile.amd

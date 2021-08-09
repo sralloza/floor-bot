@@ -9,10 +9,10 @@ const options = {
   definition: {
     openapi: "3.0.2",
     info: {
-      title: "Floor API documentation",
+      title: "Floor Bot API documentation",
       version: reqs.version
     }
-    // servers: [{ url: "https://floor-api.sralloza.es" }],
+    // servers: [{ url: "https://floor-bot.sralloza.es" }],
   },
   apis: ["./src/api/routes/**/*.ts"]
 };

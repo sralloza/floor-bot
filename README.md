@@ -1,4 +1,4 @@
-# The Floor API
+# The Floor Bot
 
 ## Deployment
 
@@ -7,14 +7,14 @@
 Development:
 
 ```bash
-docker build -t sralloza/floor-api:stable -f Dockerfile.amd .
-docker push -t sralloza/floor-api:stable
+docker build -t sralloza/floor-bot:stable -f Dockerfile.amd .
+docker push -t sralloza/floor-bot:stable
 ```
 
 Production:
 
 ```bash
-docker buildx build -t sralloza/floor-api:stable-arm --platform=linux/arm/v7 --push .
+docker buildx build -t sralloza/floor-bot:stable-arm --platform=linux/arm/v7 --push .
 ```
 
 ### Environment variables
