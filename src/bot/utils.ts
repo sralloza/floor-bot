@@ -9,7 +9,7 @@ let HELP = `
 - /start - muestra unas instrucciones para empezar
 - /registro - registra al usuario
 - /tickets - muestra los tickets de todos los usuarios
-- /tareas - muestra las asignaciones de las tareas con tareas sin completar
+- /tareas - muestra las asignaciones de las semanas con tareas sin completar
 - /completar_tarea - marcar tarea semanal como completada
 - /transferir - pide a otro usuario una transferencia
 - /purgar_cache - [ADMIN] limpia la caché
