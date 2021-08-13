@@ -5,7 +5,7 @@ import { warn } from "winston";
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
 
 const envFound = dotenv.config();
-if (envFound.error) {
+if (envFound.error && process.env.NODE_ENV !== "production") {
   warn("⚠️  Couldn't find .env file  ⚠️");
 }
 
