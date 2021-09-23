@@ -1,7 +1,7 @@
 import { scheduleJob } from "node-schedule";
 import { Telegraf } from "telegraf";
 import Container from "typedi";
-import { Logger, loggers } from "winston";
+import { Logger } from "winston";
 import GSTasksService from "../services/gsTasks";
 import GSUsersService from "../services/gsUsers";
 
