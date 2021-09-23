@@ -4,7 +4,7 @@ import { Logger } from "winston";
 import GSTasksService from "../services/gsTasks";
 
 export default (): void => {
-  scheduleJob("weekly-tasks", "0 11 * * 0", async () => {
+  scheduleJob("weekly-tasks", "0 9 * * 1", async () => {
     const tasksService = Container.get(GSTasksService);
     const logger: Logger = Container.get("logger");
 
