@@ -40,7 +40,7 @@ export default (bot: Telegraf): void => {
       await tasksService.completeTask(user.username, week, taskType as TaskType);
     } catch (error) {
       await ctx.answerCbQuery();
-      return ctx.editMessageText(error.toString());
+      return ctx.editMessageText((error as Error).toString());
     }
     await ctx.answerCbQuery();
     ctx.editMessageReplyMarkup({ inline_keyboard: [] });
