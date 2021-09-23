@@ -129,7 +129,7 @@ export default (bot: Telegraf): void => {
       );
     } catch (error) {
       logger.error(error);
-      ctx.editMessageText(error.toString());
+      ctx.editMessageText((error as Error).toString());
       ctx.telegram.sendMessage(
         userFrom.telegramID as number,
         "Error al realizar la transferencia."
