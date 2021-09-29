@@ -1,6 +1,6 @@
 {
    "name": "floor-bot",
-   "version": "0.13.1",
+   "version": "0.13.2",
    "description": "",
    "main": "./build/src/app.js",
    "scripts": {
@@ -8,7 +8,7 @@
       "prettier-format": "prettier --config .prettierrc --write src/**/*.ts",
       "test": "jest --runInBand",
       "prestart": "rimraf build/",
-      "start": "tsc && node ."
+      "start": "tsc && node --unhandled-rejections=strict ."
    },
    "keywords": [],
    "author": "",

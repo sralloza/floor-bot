@@ -9,4 +9,4 @@ export REDIS_PORT=${REDIS_PORT:=6379}
 
 /usr/sbin/wait-for-it.sh $REDIS_HOST:$REDIS_PORT
 
-node .
+node --unhandled-rejections=strict .
