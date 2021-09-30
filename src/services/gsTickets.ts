@@ -91,6 +91,7 @@ export default class GSTicketsService {
     if (!validTo) throw new Error("To invalid");
 
     await sheet.saveUpdatedCells();
+    await this.redis.delTickets();
   }
 
   public async getTicketsAsTable(): Promise<string> {
