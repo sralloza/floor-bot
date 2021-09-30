@@ -68,5 +68,6 @@ export default class GSTransactionsService {
       semana: t.week.toString()
     };
     await sheet.addRow(newRow as any);
+    await this.redisService.delTransactions();
   }
 }
