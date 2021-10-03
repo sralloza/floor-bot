@@ -110,7 +110,7 @@ export default class GSTicketsService {
     const latexTable = tableToLatex(translatedTickets);
     const regex = /\\begin{tabular}{c+}\s([{}\s&\\\-\wñáéíóú]+)\\end{tabular}/;
     const match = regex.exec(latexTable);
-    if (!match) throw new Error(latexTable);
+    if (!match) throw new Error(`Invalid latex table: ${latexTable}`);
 
     let filteredTable = `
     \\begin{tabular}{cccc}
