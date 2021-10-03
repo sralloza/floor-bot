@@ -52,6 +52,8 @@ export default (bot: Telegraf): void => {
     const logger: Logger = Container.get("logger");
     const imageURL = await tasksService.getTasksAsTable();
 
+    if (imageURL === null) return await ctx.reply("No hay ninguna tarea activa");
+
     try {
       await ctx.replyWithPhoto(imageURL);
     } catch (error) {

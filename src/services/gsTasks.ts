@@ -255,9 +255,12 @@ export default class GSTasksService {
     return `*${task.user}*`;
   }
 
-  public async getTasksAsTable(): Promise<string> {
+  public async getTasksAsTable(): Promise<string | null> {
     const redisMemory = await this.redisService.getTasksTableURL();
-    if (redisMemory) return redisMemory;
+    if (redisMemory) {
+      if (redisMemory == "null") return null;
+      return redisMemory;
+    }
 
     const tasks = await this.getWeeklyTasks();
     const translatedTasks: DBIO[] = tasks
@@ -272,10 +275,15 @@ export default class GSTasksService {
           salón: this.taskStatusAsString(task.livingRoom)
         };
       });
+
+    if (!translatedTasks.length) {
+      await this.redisService.setTasksTableURL("null");
+      return null;
+    }
     const latexTable = tableToLatex(translatedTasks);
     const regex = /\\begin{tabular}{c+}\s([{}\s&\\\-\wñáéíóú*]+)\\end{tabular}/;
     const match = regex.exec(latexTable);
-    if (!match) throw new Error(latexTable);
+    if (!match) throw new Error(`Invalid latex table: ${latexTable}`);
 
     let filteredTable = `
     \\begin{tabular}{cccc}
