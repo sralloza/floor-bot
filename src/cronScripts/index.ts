@@ -3,10 +3,12 @@ import Container from "typedi";
 import { Logger } from "winston";
 import notifications from "./notifications";
 import tasks from "./tasks";
+import redis from "./redis";
 
 export default (): void => {
-  tasks();
   notifications();
+  redis();
+  tasks();
 
   const logger: Logger = Container.get("logger");
   const jobNames = Object.keys(scheduledJobs);
