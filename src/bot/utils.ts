@@ -12,8 +12,9 @@ let HELP = `
 - /tareas - muestra las asignaciones de las semanas con tareas sin completar
 - /completar_tarea - marcar tarea semanal como completada
 - /transferir - pide a otro usuario una transferencia
-- /purgar_cache - [ADMIN] limpia la caché
 - /version - muestra la versión del bot
+- /purgar_cache - [ADMIN] limpia la caché
+- /mostrar_cache - [ADMIN] muestra el estado de la caché
 `;
 
 HELP = HELP.replace(/_/g, "\\_")

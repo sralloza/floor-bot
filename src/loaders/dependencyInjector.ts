@@ -11,6 +11,7 @@ export interface RedisObj {
   setex: (key: string, seconds: number, value: string) => Promise<string>;
   getList: (key: string, start: number, stop: number) => Promise<string[]>;
   del: (...args: string[]) => Promise<number>;
+  keys: (pattern: string) => Promise<string[]>;
 }
 
 export default async (): Promise<void> => {
@@ -28,7 +29,8 @@ export default async (): Promise<void> => {
       set: promisify(client.set).bind(client),
       setex: promisify(client.setex).bind(client),
       del: promisify(client.del).bind(client),
-      getList: promisify(client.lrange).bind(client)
+      getList: promisify(client.lrange).bind(client),
+      keys: promisify(client.keys).bind(client)
     };
     Container.set("redis", redisObj);
     LoggerInstance.info("Redis injected into container");
