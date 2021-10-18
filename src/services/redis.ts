@@ -23,6 +23,10 @@ export default class RedisService {
     return await this.redis.del(...Object.keys(REDIS_KEYS_MAPPER));
   }
 
+  public async getCacheKeys(pattern = "*"): Promise<string[]> {
+    return await this.redis.keys(pattern);
+  }
+
   // Tasks
   public async getTasks(): Promise<WeeklyStatefulTask[] | null> {
     const result = await this.redis.get(REDIS_KEYS_MAPPER.tasks);
