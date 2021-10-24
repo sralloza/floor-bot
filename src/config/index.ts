@@ -10,8 +10,14 @@ if (envFound.error && process.env.NODE_ENV !== "production") {
 }
 
 // TODO: better settings checks
+if (!process.env.ADMIN_ID) {
+  /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+  console.error("Must set env var ADMIN_ID");
+  process.exit(1);
+}
 
 const settings = {
+  admin_id: parseInt(process.env.ADMIN_ID || ""),
   port: parseInt(process.env.PORT || "80", 10),
   logs_level: process.env.LOG_LEVEL || "silly",
   api_prefix: "/",
