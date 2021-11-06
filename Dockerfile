@@ -1,13 +1,4 @@
-FROM arm32v7/ubuntu:16.04
-
-RUN apt update && \
-    apt upgrade && \
-    apt install curl npm wget -y && \
-    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
-    apt install nodejs -y && \
-    rm -rf /var/lib/apt/lists/* && \
-    wget --quiet https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -O /usr/sbin/wait-for-it.sh && \
-    chmod +x /usr/sbin/wait-for-it.sh
+FROM node:15.14.0-alpine3.13
 
 # Create app directory
 WORKDIR /usr/src/app

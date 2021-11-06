@@ -4,17 +4,8 @@
 
 ### Docker images
 
-Development:
-
 ```bash
-docker build -t sralloza/floor-bot:stable -f Dockerfile.amd .
-docker push -t sralloza/floor-bot:stable
-```
-
-Production:
-
-```bash
-docker buildx build -t sralloza/floor-bot:stable-arm --platform=linux/arm/v7 --push .
+docker buildx build -t sralloza/floor-bot:$VERSION --platform=linux/arm/v7,linux/amd64 --push .
 ```
 
 ### Environment variables

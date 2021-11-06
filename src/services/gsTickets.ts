@@ -92,6 +92,9 @@ export default class GSTicketsService {
 
     await sheet.saveUpdatedCells();
     await this.redis.delTickets();
+
+    if (settings.awaitTableGeneration) await this.getTicketsAsTable();
+    else this.getTicketsAsTable();
   }
 
   public async getTicketsAsTable(): Promise<string> {
@@ -142,6 +145,7 @@ export default class GSTicketsService {
     }
 
     const newURL = "http://latex2png.com" + response.data.url;
+    this.logger.info("Generated tickets table URL: " + newURL);
     await this.redis.setTicketsTableURL(newURL);
     return newURL;
   }

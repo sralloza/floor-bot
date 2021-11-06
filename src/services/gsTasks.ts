@@ -68,6 +68,9 @@ export default class GSTasksService {
     await sheet.addRow(newRow as any);
     this.logger.info(`Created task: ${JSON.stringify(newRow)}`);
     await this.redisService.delTasks();
+
+    if (settings.awaitTableGeneration) await this.getTasksAsTable();
+    else this.getTasksAsTable();
   }
 
   public async getWeeklyTasks(): Promise<WeeklyStatefulTask[]> {
@@ -163,6 +166,9 @@ export default class GSTasksService {
     this.cellsService.setGreenBackground(cell);
     await sheet.saveUpdatedCells();
     await this.redisService.delTasks();
+    
+    if (settings.awaitTableGeneration) await this.getTasksAsTable();
+    else this.getTasksAsTable();
   }
 
   public async transferTask(
@@ -191,6 +197,9 @@ export default class GSTasksService {
     cell.value = usernameTo;
     await sheet.saveUpdatedCells();
     await this.redisService.delTasks();
+
+    if (settings.awaitTableGeneration) await this.getTasksAsTable();
+    else this.getTasksAsTable();
   }
 
   private async notifyUsers(task: WeeklyTask) {
@@ -315,6 +324,7 @@ export default class GSTasksService {
     }
 
     const newURL = "http://latex2png.com" + response.data.url;
+    this.logger.info("Generated tasks table URL: " + newURL);
     await this.redisService.setTasksTableURL(newURL);
     return newURL;
   }

@@ -18,6 +18,7 @@ if (!process.env.ADMIN_ID) {
 
 const settings = {
   admin_id: parseInt(process.env.ADMIN_ID || ""),
+  awaitTableGeneration: process.env.AWAIT_TABLE_GENERATION !== undefined,
   port: parseInt(process.env.PORT || "80", 10),
   logs_level: process.env.LOG_LEVEL || "silly",
   api_prefix: "/",
