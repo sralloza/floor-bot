@@ -1,10 +1,10 @@
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
-import Container from "typedi";
-import { Logger } from "winston";
 import routes from "../api";
+import logRequestBody from "../api/middlewares/logger";
 import config from "../config";
 import { HTTPException } from "../interfaces/errors";
+import Logger from "./logger";
 
 export default (app: express.Application): void => {
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
@@ -14,6 +14,8 @@ export default (app: express.Application): void => {
   app.use(cors());
 
   app.use(express.json());
+
+  app.use(logRequestBody as any);
 
   app.use(config.api_prefix, routes());
 
@@ -30,8 +32,7 @@ export default (app: express.Application): void => {
   });
 
   app.use((err: HTTPException, req: Request, res: Response, next: NextFunction) => {
-    const logger: Logger = Container.get("logger");
-    logger.error("🔥 error: %o", err);
+    Logger.error("🔥 error: %o", err);
     res.status(err.status || 500).json({ detail: err.message });
     next();
   });

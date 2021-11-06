@@ -1,5 +1,5 @@
-import isAuth from "./auth";
+import logRequestBody from "./logger";
 
 export default {
-  isAuth
+  logRequestBody
 };
