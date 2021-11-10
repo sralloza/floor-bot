@@ -22,8 +22,7 @@ export default async (): Promise<void> => {
     if (settings.disableRedis) {
       Container.set("redis", undefined);
       LoggerInstance.warn("Skipping Redis injection");
-    } else{
-
+    } else {
       const client = redis.createClient({
         host: settings.redis_host,
         port: settings.redis_port
@@ -38,6 +37,10 @@ export default async (): Promise<void> => {
         keys: promisify(client.keys).bind(client)
       };
       Container.set("redis", redisObj);
+      client.on("error", function (err) {
+        LoggerInstance.error(`Error connecting with redis: ${err}`);
+        process.exit(1);
+      });
       LoggerInstance.info("Redis injected into container");
     }
   } catch (e) {
