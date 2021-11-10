@@ -19,21 +19,27 @@ export default async (): Promise<void> => {
     Container.set("logger", LoggerInstance);
     LoggerInstance.info("Logger injected into container");
 
-    const client = redis.createClient({
-      host: settings.redis_host,
-      port: settings.redis_port
-    });
-    const redisObj: RedisObj = {
-      client: client,
-      get: promisify(client.get).bind(client),
-      set: promisify(client.set).bind(client),
-      setex: promisify(client.setex).bind(client),
-      del: promisify(client.del).bind(client),
-      getList: promisify(client.lrange).bind(client),
-      keys: promisify(client.keys).bind(client)
-    };
-    Container.set("redis", redisObj);
-    LoggerInstance.info("Redis injected into container");
+    if (settings.disableRedis) {
+      Container.set("redis", undefined);
+      LoggerInstance.warn("Skipping Redis injection");
+    } else{
+
+      const client = redis.createClient({
+        host: settings.redis_host,
+        port: settings.redis_port
+      });
+      const redisObj: RedisObj = {
+        client: client,
+        get: promisify(client.get).bind(client),
+        set: promisify(client.set).bind(client),
+        setex: promisify(client.setex).bind(client),
+        del: promisify(client.del).bind(client),
+        getList: promisify(client.lrange).bind(client),
+        keys: promisify(client.keys).bind(client)
+      };
+      Container.set("redis", redisObj);
+      LoggerInstance.info("Redis injected into container");
+    }
   } catch (e) {
     LoggerInstance.error("🔥 Error on dependency injector loader: %o", e);
     throw e;

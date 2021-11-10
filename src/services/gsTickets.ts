@@ -42,12 +42,12 @@ export default class GSTicketsService {
 
   constructor(
     @Inject("logger") private logger: Logger,
-    @Inject() private redis: RedisService,
+    @Inject() private redisService: RedisService,
     @Inject("doc") private doc: GoogleSpreadsheet
   ) {}
 
   public async getTickets(): Promise<userBalance[]> {
-    const redisMemory = await this.redis.getTickets();
+    const redisMemory = await this.redisService.getTickets();
     if (redisMemory) return redisMemory;
 
     const sheet = this.doc.sheetsById[this.sheetID];
@@ -57,7 +57,7 @@ export default class GSTicketsService {
       return { user, kitchen: +cocina, livingRoom: +salón, bathrooms: +baños };
     });
 
-    await this.redis.setTickets(balances);
+    await this.redisService.setTickets(balances);
     return balances;
   }
 
@@ -91,14 +91,14 @@ export default class GSTicketsService {
     if (!validTo) throw new Error("To invalid");
 
     await sheet.saveUpdatedCells();
-    await this.redis.delTickets();
+    await this.redisService.delTickets();
 
     if (settings.awaitTableGeneration) await this.getTicketsAsTable();
     else this.getTicketsAsTable();
   }
 
   public async getTicketsAsTable(): Promise<string> {
-    const redisMemory = await this.redis.getTicketsTableURL();
+    const redisMemory = await this.redisService.getTicketsTableURL();
     if (redisMemory) return redisMemory;
 
     const tickets = await this.getTickets();
@@ -146,7 +146,7 @@ export default class GSTicketsService {
 
     const newURL = "http://latex2png.com" + response.data.url;
     this.logger.info("Generated tickets table URL: " + newURL);
-    await this.redis.setTicketsTableURL(newURL);
+    await this.redisService.setTicketsTableURL(newURL);
     return newURL;
   }
 }

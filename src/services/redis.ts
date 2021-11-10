@@ -16,90 +16,110 @@ const REDIS_KEYS_MAPPER = {
 
 @Service()
 export default class RedisService {
-  constructor(@Inject("redis") private redis: RedisObj) {}
+  constructor(@Inject("redis") private client: RedisObj | undefined) {}
 
   // General
   public async clearCache(): Promise<number> {
-    return await this.redis.del(...Object.keys(REDIS_KEYS_MAPPER));
+    if (!this.client) return 0;
+    return await this.client.del(...Object.keys(REDIS_KEYS_MAPPER));
   }
 
   public async getCacheKeys(pattern = "*"): Promise<string[]> {
-    return await this.redis.keys(pattern);
+    if (!this.client) return [];
+    return await this.client.keys(pattern);
   }
 
   // Tasks
   public async getTasks(): Promise<WeeklyStatefulTask[] | null> {
-    const result = await this.redis.get(REDIS_KEYS_MAPPER.tasks);
+    if (!this.client) return null;
+    const result = await this.client.get(REDIS_KEYS_MAPPER.tasks);
     if (result) return JSON.parse(result);
     return null;
   }
   public async setTasks(tasks: WeeklyStatefulTask[]): Promise<void> {
-    await this.redis.set(REDIS_KEYS_MAPPER.tasks, JSON.stringify(tasks));
+    if (!this.client) return;
+    await this.client.set(REDIS_KEYS_MAPPER.tasks, JSON.stringify(tasks));
     await this.delTasksTableURL();
   }
   public async delTasks(): Promise<void> {
-    await this.redis.del(REDIS_KEYS_MAPPER.tasks);
+    if (!this.client) return;
+    await this.client.del(REDIS_KEYS_MAPPER.tasks);
     await this.delTasksTableURL();
   }
 
   public async getTasksTableURL(): Promise<string | null> {
-    return await this.redis.get(REDIS_KEYS_MAPPER.tasksTableURL);
+    if (!this.client) return null;
+    return await this.client.get(REDIS_KEYS_MAPPER.tasksTableURL);
   }
   public async setTasksTableURL(tableURL: string): Promise<void> {
-    await this.redis.set(REDIS_KEYS_MAPPER.tasksTableURL, tableURL);
+    if (!this.client) return;
+    await this.client.set(REDIS_KEYS_MAPPER.tasksTableURL, tableURL);
   }
   public async delTasksTableURL(): Promise<void> {
-    await this.redis.del(REDIS_KEYS_MAPPER.tasksTableURL);
+    if (!this.client) return;
+    await this.client.del(REDIS_KEYS_MAPPER.tasksTableURL);
   }
 
   // Tickets
   public async getTickets(): Promise<userBalance[] | null> {
-    const result = await this.redis.get(REDIS_KEYS_MAPPER.tickets);
+    if (!this.client) return null;
+    const result = await this.client.get(REDIS_KEYS_MAPPER.tickets);
     if (result) return JSON.parse(result);
     return null;
   }
   public async setTickets(tickets: userBalance[]): Promise<void> {
-    await this.redis.set(REDIS_KEYS_MAPPER.tickets, JSON.stringify(tickets));
+    if (!this.client) return;
+    await this.client.set(REDIS_KEYS_MAPPER.tickets, JSON.stringify(tickets));
     await this.delTicketsTableURL();
   }
   public async delTickets(): Promise<void> {
-    await this.redis.del(REDIS_KEYS_MAPPER.tickets);
+    if (!this.client) return;
+    await this.client.del(REDIS_KEYS_MAPPER.tickets);
     await this.delTicketsTableURL();
   }
 
   public async getTicketsTableURL(): Promise<string | null> {
-    return await this.redis.get(REDIS_KEYS_MAPPER.ticketsTableURL);
+    if (!this.client) return null;
+    return await this.client.get(REDIS_KEYS_MAPPER.ticketsTableURL);
   }
   public async setTicketsTableURL(tableURL: string): Promise<void> {
-    await this.redis.set(REDIS_KEYS_MAPPER.ticketsTableURL, tableURL);
+    if (!this.client) return;
+    await this.client.set(REDIS_KEYS_MAPPER.ticketsTableURL, tableURL);
   }
   public async delTicketsTableURL(): Promise<void> {
-    await this.redis.del(REDIS_KEYS_MAPPER.ticketsTableURL);
+    if (!this.client) return;
+    await this.client.del(REDIS_KEYS_MAPPER.ticketsTableURL);
   }
 
   // Transactions
   public async getTransactions(): Promise<Transaction[] | null> {
-    const result = await this.redis.get(REDIS_KEYS_MAPPER.transactions);
+    if (!this.client) return null;
+    const result = await this.client.get(REDIS_KEYS_MAPPER.transactions);
     if (result) return JSON.parse(result);
     return null;
   }
   public async setTransactions(transactions: Transaction[]): Promise<void> {
-    await this.redis.set(REDIS_KEYS_MAPPER.transactions, JSON.stringify(transactions));
+    if (!this.client) return;
+    await this.client.set(REDIS_KEYS_MAPPER.transactions, JSON.stringify(transactions));
   }
   public async delTransactions(): Promise<void> {
-    await this.redis.del(REDIS_KEYS_MAPPER.transactions);
+    if (!this.client) return;
+    await this.client.del(REDIS_KEYS_MAPPER.transactions);
   }
 
   // Users
   public async getUsers(): Promise<RegisteredUser[] | null> {
-    const result = await this.redis.get(REDIS_KEYS_MAPPER.users);
+    if (!this.client) return null;
+    const result = await this.client.get(REDIS_KEYS_MAPPER.users);
     if (result) return JSON.parse(result);
     return null;
   }
   public async setUsers(users: RegisteredUser[]): Promise<void> {
-    await this.redis.set(REDIS_KEYS_MAPPER.users, JSON.stringify(users));
+    if (!this.client) return;
+    await this.client.set(REDIS_KEYS_MAPPER.users, JSON.stringify(users));
   }
   public async delUsers(): Promise<void> {
-    await this.redis.del(REDIS_KEYS_MAPPER.users);
+    if (!this.client) return;
+    await this.client.del(REDIS_KEYS_MAPPER.users);
   }
 }
