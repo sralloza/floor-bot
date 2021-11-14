@@ -10,8 +10,14 @@ docker buildx build -t sralloza/floor-bot:$VERSION --platform=linux/arm/v7,linux
 
 ### Environment variables
 
-- `PORT`: the port where the API will be listening. Defaults to `80`.
-- `LOG_LEVEL`: winston's log level. Defaults to `silly`.
-- `TELEGRAM_TOKEN_BOT`: the telegram bot's token.
-- `GOOGLE_SERVICE_ACCOUNT_EMAIL`: the service account email to work with google spreadsheets.
+- `ADMIN_ID`: the admin's user telegram ID
+- `AWAIT_TABLE_GENERATION`: if set (to any value) the system will await for the tables URLS before returning the message to the user.
+- `DISABLE_REDIS`: if set (to any value) redis cache will be disabled.
+- `ENABLE_CRON_INTEGRATION`: if set (to any value) cron system will be deactivated.
 - `GOOGLE_PRIVATE_KEY`: the private key to work with google spreadsheets.
+- `GOOGLE_SERVICE_ACCOUNT_EMAIL`: the service account email to work with google spreadsheets.
+- `LOG_LEVEL`: winston's log level. Defaults to `silly`.
+- `PORT`: the port where the API will be listening. Defaults to `80`.
+- `REDIS_HOST`: host where redis is listening. Defaults to `localhost`.
+- `REDIS_PORT`: port where redis is listening. Defaults to  `6379`.
+- `TELEGRAM_TOKEN_BOT`: the telegram bot's token.
