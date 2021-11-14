@@ -1,6 +1,7 @@
 import { Application } from "express";
 import morgan from "morgan";
 import { Telegraf } from "telegraf";
+import settings from "../config";
 import botLoader from "./bot";
 import cronScheduler from "./cronScheduler";
 import dependencyInjector from "./dependencyInjector";
@@ -30,6 +31,8 @@ export default async ({ app, bot }: Args): Promise<void> => {
   expressLoader(app);
   Logger.info("Express loaded");
 
-  cronScheduler();
-  Logger.info("Cron loaded");
+  if (settings.enableCronIntegration) {
+    cronScheduler();
+    Logger.info("Cron loaded");
+  }
 };
