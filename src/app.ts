@@ -7,6 +7,7 @@ import Logger from "./loaders/logger";
 
 async function startServer() {
   Logger.info(`Launching version v${version}`);
+  Logger.info(`Current configuration: ${JSON.stringify(settings)}`);
   const app = express();
   const token = settings.telegram_token_bot;
   if (token === undefined) throw new Error("BOT_TOKEN must be provided!");
