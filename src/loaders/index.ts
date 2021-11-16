@@ -2,7 +2,7 @@ import { Application } from "express";
 import morgan from "morgan";
 import { Telegraf } from "telegraf";
 import settings from "../config";
-import botLoader from "./bot";
+import botLoader from "./bot";  
 import cronScheduler from "./cronScheduler";
 import dependencyInjector from "./dependencyInjector";
 import "./events";
