@@ -1,9 +1,11 @@
 import { scheduledJobs } from "node-schedule";
+import "reflect-metadata";
 import Container from "typedi";
 import { Logger } from "winston";
-import notifications from "./notifications";
-import tasks from "./tasks";
-import redis from "./redis";
+import notifications, { mondayReminderJob, sundayReminderJob } from "./notifications";
+import redis, { redisMonitorJob } from "./redis";
+import tasks, { weeklyTasksJob } from "./tasks";
+export { mondayReminderJob, sundayReminderJob, weeklyTasksJob, redisMonitorJob };
 
 export default (): void => {
   notifications();

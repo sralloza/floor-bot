@@ -16,7 +16,8 @@ ENV NODE_ENV development
 
 RUN npm ci
 
-COPY . .
+COPY tsconfig.json .
+COPY src src
 
 EXPOSE 80
 
@@ -25,5 +26,7 @@ ENV NODE_ENV production
 RUN tsc
 
 RUN npm ci
+
+COPY entrypoint.sh .
 
 ENTRYPOINT [ "./entrypoint.sh"]
