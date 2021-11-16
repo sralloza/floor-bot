@@ -11,9 +11,9 @@ docker buildx build -t sralloza/floor-bot:$VERSION --platform=linux/arm/v7,linux
 ### Environment variables
 
 - `ADMIN_ID`: the admin's user telegram ID
-- `AWAIT_TABLE_GENERATION`: if set (to any value) the system will await for the tables URLS before returning the message to the user.
-- `DISABLE_REDIS`: if set (to any value) redis cache will be disabled.
-- `ENABLE_CRON_INTEGRATION`: if set (to any value) cron system will be deactivated.
+- `AWAIT_TABLE_GENERATION`: if set to true the system will await for the tables URLS before returning the message to the user.
+- `DISABLE_REDIS`: if set to true redis cache will be disabled.
+- `ENABLE_CRON_INTEGRATION`: if set to true cron system will be deactivated.
 - `GOOGLE_PRIVATE_KEY`: the private key to work with google spreadsheets.
 - `GOOGLE_SERVICE_ACCOUNT_EMAIL`: the service account email to work with google spreadsheets.
 - `LOG_LEVEL`: winston's log level. Defaults to `silly`.

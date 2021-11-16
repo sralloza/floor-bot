@@ -19,8 +19,8 @@ if (!process.env.ADMIN_ID) {
 const settings = {
   admin_id: parseInt(process.env.ADMIN_ID || ""),
   api_prefix: "/",
-  awaitTableGeneration: process.env.AWAIT_TABLE_GENERATION !== undefined,
-  enableCronIntegration: process.env.ENABLE_CRON_INTEGRATION !== undefined,
+  awaitTableGeneration: process.env.AWAIT_TABLE_GENERATION?.toLowerCase() === "true",
+  enableCronIntegration: process.env.ENABLE_CRON_INTEGRATION?.toLowerCase()==="true",
   client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL as string,
   disableRedis: process.env.DISABLE_REDIS?.toLowerCase() === "true",
   google_sheets_ids: {
