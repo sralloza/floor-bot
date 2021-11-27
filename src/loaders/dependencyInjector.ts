@@ -14,35 +14,44 @@ export interface RedisObj {
   keys: (pattern: string) => Promise<string[]>;
 }
 
-export default async (): Promise<void> => {
+const injectLogger = () => {
+  Container.set("logger", LoggerInstance);
+};
+
+const injectRedis = (): boolean => {
+  if (settings.disableRedis) {
+    Container.set("redis", undefined);
+    return false;
+  } else {
+    const client = redis.createClient({
+      host: settings.redis_host,
+      port: settings.redis_port
+    });
+    const redisObj: RedisObj = {
+      client: client,
+      get: promisify(client.get).bind(client),
+      set: promisify(client.set).bind(client),
+      setex: promisify(client.setex).bind(client),
+      del: promisify(client.del).bind(client),
+      getList: promisify(client.lrange).bind(client),
+      keys: promisify(client.keys).bind(client)
+    };
+    Container.set("redis", redisObj);
+    client.on("error", function (err) {
+      LoggerInstance.error(`Error connecting with redis: ${err}`);
+      process.exit(1);
+    });
+    return true;
+  }
+};
+
+export default (): void => {
   try {
-    Container.set("logger", LoggerInstance);
+    injectLogger();
     LoggerInstance.info("Logger injected into container");
 
-    if (settings.disableRedis) {
-      Container.set("redis", undefined);
-      LoggerInstance.warn("Skipping Redis injection");
-    } else {
-      const client = redis.createClient({
-        host: settings.redis_host,
-        port: settings.redis_port
-      });
-      const redisObj: RedisObj = {
-        client: client,
-        get: promisify(client.get).bind(client),
-        set: promisify(client.set).bind(client),
-        setex: promisify(client.setex).bind(client),
-        del: promisify(client.del).bind(client),
-        getList: promisify(client.lrange).bind(client),
-        keys: promisify(client.keys).bind(client)
-      };
-      Container.set("redis", redisObj);
-      client.on("error", function (err) {
-        LoggerInstance.error(`Error connecting with redis: ${err}`);
-        process.exit(1);
-      });
-      LoggerInstance.info("Redis injected into container");
-    }
+    if (injectRedis()) LoggerInstance.info("Redis injected into container");
+    else LoggerInstance.warn("Skipping Redis injection");
   } catch (e) {
     LoggerInstance.error("🔥 Error on dependency injector loader: %o", e);
     throw e;
