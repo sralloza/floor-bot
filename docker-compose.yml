@@ -9,9 +9,9 @@ services:
   floor-bot:
     build:
       context: .
-      dockerfile: Dockerfile.amd
-    environment:
-      PORT: 80
-      LOG_LEVEL: silly
+      dockerfile: Dockerfile
+    command:
+      - server
+    env_file: .env
     ports:
       - 80:80

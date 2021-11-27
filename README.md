@@ -23,3 +23,17 @@ docker buildx build -t sralloza/floor-bot:$VERSION --platform=linux/arm/v7,linux
 - `TELEGRAM_TOKEN_BOT`: the telegram bot's token.
 - `DISABLE_SCHEDULER_START_DATE`: if set, all the tasks cronjobs will be disabled from this date.
 - `DISABLE_SCHEDULER_END_DATE`: if set, all tasks cronjobs will be reenabled from this date.
+
+## Test
+
+First launch redis:
+
+```shell
+docker-compose up -d redis
+```
+
+Then compile and launch `floor-bot`:
+
+```shell
+docker-compose up floor-bot
+```
