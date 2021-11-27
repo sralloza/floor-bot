@@ -4,6 +4,7 @@ import Container from "typedi";
 import { Logger } from "winston";
 import GSTasksService from "../services/gsTasks";
 import GSUsersService from "../services/gsUsers";
+import { areTasksCronEnabled } from "../utils/cron";
 
 export const sundayReminderJob = async (): Promise<void> => {
   const tasksService = Container.get(GSTasksService);
@@ -12,6 +13,10 @@ export const sundayReminderJob = async (): Promise<void> => {
   const bot: Telegraf = Container.get("bot");
 
   logger.debug("Firing sunday reminder");
+  if (!areTasksCronEnabled()) {
+    logger.info("Cron is disabled, exiting cron script");
+    return;
+  }
   const users = await usersService.getUsers();
 
   for (const user of users) {
@@ -35,6 +40,10 @@ export const mondayReminderJob = async (): Promise<void> => {
   const bot: Telegraf = Container.get("bot");
 
   logger.debug("Firing monday reminder");
+  if (!areTasksCronEnabled()) {
+    logger.info("Cron is disabled, exiting cron script");
+    return;
+  }
   const users = await usersService.getUsers();
 
   for (const user of users) {
