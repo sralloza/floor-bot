@@ -22,10 +22,12 @@ const Logger = require(\"./build/src/loaders/logger\").default
 
 jobsLoader().then(() => {
     Logger.info(\"Launching script\");
-    cronScripts.$1Job();
+    cronScripts.$1Job().then(() => process.exit());
   }
 );
 "
 
 echo "launching: $nodeCmd"
 node --unhandled-rejections=strict -e "$nodeCmd"
+echo "Done"
+exit 0
