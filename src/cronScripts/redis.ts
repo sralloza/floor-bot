@@ -1,6 +1,7 @@
 import { scheduleJob } from "node-schedule";
 import Container from "typedi";
 import { Logger } from "winston";
+import settings from "../config";
 import RedisService from "../services/redis";
 
 export const redisMonitorJob = async () => {
@@ -12,5 +13,6 @@ export const redisMonitorJob = async () => {
 };
 
 export default (): void => {
-  scheduleJob("redis-monitor", "*/30 * * * *", redisMonitorJob);
+  if (settings.enableCacheMonitoring)
+    scheduleJob("redis-monitor", "*/30 * * * *", redisMonitorJob);
 };
