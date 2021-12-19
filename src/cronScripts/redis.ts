@@ -1,7 +1,7 @@
-import settings from "../config";
 import { scheduleJob } from "node-schedule";
 import Container from "typedi";
 import { Logger } from "winston";
+import settings from "../config";
 import RedisService from "../services/redis";
 
 export const redisMonitorJob = async () => {
