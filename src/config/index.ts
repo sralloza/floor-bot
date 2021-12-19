@@ -21,6 +21,8 @@ const settings = {
   api_prefix: "/",
   awaitTableGeneration: process.env.AWAIT_TABLE_GENERATION?.toLowerCase() === "true",
   enableCronIntegration: process.env.ENABLE_CRON_INTEGRATION?.toLowerCase() === "true",
+  enableCacheMonitoring:
+    process.env.ENABLE_CACHE_MONITORING?.toLocaleLowerCase() === "true",
   client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL as string,
   disableRedis: process.env.DISABLE_REDIS?.toLowerCase() === "true",
   google_sheets_ids: {
