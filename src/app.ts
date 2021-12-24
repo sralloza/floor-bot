@@ -9,7 +9,7 @@ async function startServer() {
   Logger.info(`Launching version v${version}`);
   Logger.info(`Current configuration: ${JSON.stringify(settings)}`);
   const app = express();
-  const token = settings.telegram_token_bot;
+  const token = settings.telegramTokenBot;
   if (token === undefined) throw new Error("BOT_TOKEN must be provided!");
 
   const bot = new Telegraf(token);

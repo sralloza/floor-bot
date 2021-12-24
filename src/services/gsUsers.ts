@@ -20,7 +20,7 @@ interface DBInput {
 
 @Service()
 export default class GSUsersService {
-  sheetID = settings.google_sheets_ids.users;
+  sheetID = settings.googleSheetsIDs.users;
 
   constructor(
     @Inject("logger") private logger: Logger,

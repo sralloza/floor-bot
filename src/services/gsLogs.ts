@@ -5,7 +5,7 @@ import settings from "../config";
 
 @Service()
 export default class GSLogsService {
-  sheetID = settings.google_sheets_ids.logs;
+  sheetID = settings.googleSheetsIDs.logs;
 
   constructor(
     @Inject("logger") private logger: Logger,

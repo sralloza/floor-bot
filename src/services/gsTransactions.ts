@@ -22,7 +22,7 @@ interface DBInput {
 
 @Service()
 export default class GSTransactionsService {
-  sheetID = settings.google_sheets_ids.transactions;
+  sheetID = settings.googleSheetsIDs.transactions;
 
   constructor(
     @Inject("logger") private logger: Logger,

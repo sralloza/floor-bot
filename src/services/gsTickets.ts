@@ -38,7 +38,7 @@ const TASK_TYPE_TO_COLUMN: _Mapper = {
 
 @Service()
 export default class GSTicketsService {
-  sheetID = settings.google_sheets_ids.tickets;
+  sheetID = settings.googleSheetsIDs.tickets;
 
   constructor(
     @Inject("logger") private logger: Logger,

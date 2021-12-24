@@ -46,7 +46,7 @@ export interface DBIO {
 
 @Service()
 export default class GSTasksService {
-  sheetID = settings.google_sheets_ids.tasks;
+  sheetID = settings.googleSheetsIDs.tasks;
 
   constructor(
     @Inject("logger") private logger: Logger,
@@ -166,7 +166,7 @@ export default class GSTasksService {
     this.cellsService.setGreenBackground(cell);
     await sheet.saveUpdatedCells();
     await this.redisService.delTasks();
-    
+
     if (settings.awaitTableGeneration) await this.getTasksAsTable();
     else this.getTasksAsTable();
   }

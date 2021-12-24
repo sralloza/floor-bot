@@ -70,7 +70,7 @@ export default (app: Router): void => {
 
   const jsonName = "openapi.json";
   const openapiJsonFullRoute =
-    settings.api_prefix == "/" ? jsonName : settings.api_prefix + "/" + jsonName;
+    settings.apiPrefix == "/" ? jsonName : settings.apiPrefix + "/" + jsonName;
 
   router.get("/" + jsonName, (req, res) => {
     res.send(openapiSpecification).end();

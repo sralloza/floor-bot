@@ -24,8 +24,8 @@ const injectRedis = (): boolean => {
     return false;
   } else {
     const client = redis.createClient({
-      host: settings.redis_host,
-      port: settings.redis_port
+      host: settings.redisHost,
+      port: settings.redisPort
     });
     const redisObj: RedisObj = {
       client: client,

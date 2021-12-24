@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const LoggerInstance = winston.createLogger({
-  level: config.logs_level,
+  level: config.logLevel,
   levels: winston.config.npm.levels,
   format: winston.format.combine(
     winston.format.timestamp({

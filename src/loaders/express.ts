@@ -17,7 +17,7 @@ export default (app: express.Application): void => {
 
   app.use(logRequestBody as any);
 
-  app.use(config.api_prefix, routes());
+  app.use(config.apiPrefix, routes());
 
   app.use((req, res, next) => {
     res.status(404).json({ detail: "Not Found" });

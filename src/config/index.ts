@@ -38,33 +38,38 @@ if (!process.env.SH_ID_LOGS) {
 }
 
 const settings = {
-  admin_id: parseInt(process.env.ADMIN_ID),
-  api_prefix: "/",
+  adminID: parseInt(process.env.ADMIN_ID || ""),
+  apiPrefix: "/",
   awaitTableGeneration: process.env.AWAIT_TABLE_GENERATION?.toLowerCase() === "true",
-  enableCronIntegration: process.env.ENABLE_CRON_INTEGRATION?.toLowerCase() === "true",
+  clientEmail: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL as string,
+  cronSchedules: {
+    mondayReminder: process.env.CRON_SCHEDULE_MONDAY_REMINDER || "30 8 * * 1",
+    redisMonitor: process.env.CRON_SCHEDULE_REDIS_MONITOR || "*/30 * * * *",
+    sundayReminder: process.env.CRON_SCHEDULE_SUNDAY_REMINDER || "0 9 * * 0",
+    weeklyTasks: process.env.CRON_SCHEDULE_WEEKLY_TASKS || "0 9 * * 1"
+  },
+  disableRedis: process.env.DISABLE_REDIS?.toLowerCase() === "true",
+  disableSchedulerEndDate: process.env.DISABLE_SCHEDULER_END_DATE
+    ? Date.parse(process.env.DISABLE_SCHEDULER_END_DATE)
+    : null,
+  disableSchedulerStartDate: process.env.DISABLE_SCHEDULER_START_DATE
+    ? Date.parse(process.env.DISABLE_SCHEDULER_START_DATE)
+    : null,
   enableCacheMonitoring:
     process.env.ENABLE_CACHE_MONITORING?.toLocaleLowerCase() === "true",
-  client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL as string,
-  disableRedis: process.env.DISABLE_REDIS?.toLowerCase() === "true",
-  google_sheets_ids: {
+  googleSheetsIDs: {
     users: parseInt(process.env.SH_ID_USERS),
     tasks: parseInt(process.env.SH_ID_TASKS),
     transactions: parseInt(process.env.SH_ID_TRANSACTIONS),
     tickets: parseInt(process.env.SH_ID_TICKETS),
     logs: parseInt(process.env.SH_ID_LOGS)
   },
-  logs_level: process.env.LOG_LEVEL || "silly",
+  logLevel: process.env.LOG_LEVEL || "silly",
   port: parseInt(process.env.PORT || "80"),
-  private_key: (process.env.GOOGLE_PRIVATE_KEY as string).replace(/\\n/gm, "\n"),
-  redis_host: process.env.REDIS_HOST || "localhost",
-  redis_port: parseInt(process.env.REDIS_PORT || "6379"),
-  telegram_token_bot: process.env.TELEGRAM_TOKEN_BOT,
-  disable_scheduler_start_date: process.env.DISABLE_SCHEDULER_START_DATE
-    ? Date.parse(process.env.DISABLE_SCHEDULER_START_DATE)
-    : null,
-  disable_scheduler_end_date: process.env.DISABLE_SCHEDULER_END_DATE
-    ? Date.parse(process.env.DISABLE_SCHEDULER_END_DATE)
-    : null
+  privateKey: (process.env.GOOGLE_PRIVATE_KEY as string).replace(/\\n/gm, "\n"),
+  redisHost: process.env.REDIS_HOST || "localhost",
+  redisPort: parseInt(process.env.REDIS_PORT || "6379"),
+  telegramTokenBot: process.env.TELEGRAM_TOKEN_BOT
 };
 
 export default settings;

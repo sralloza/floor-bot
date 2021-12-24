@@ -14,5 +14,5 @@ export const redisMonitorJob = async () => {
 
 export default (): void => {
   if (settings.enableCacheMonitoring)
-    scheduleJob("redis-monitor", "*/30 * * * *", redisMonitorJob);
+    scheduleJob("redis-monitor", settings.cronSchedules.redisMonitor, redisMonitorJob);
 };
