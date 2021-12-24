@@ -25,6 +25,10 @@ docker buildx build -t sralloza/floor-bot:$VERSION --platform=linux/arm/v7,linux
 **Optional**:
 
 - `AWAIT_TABLE_GENERATION`: if set to `true` the system will await for the tables URLS before returning the message to the user.
+- `CRON_SCHEDULE_MONDAY_REMINDER`: cron schedule of the `monday-reminder` job. Defaults to `30 8 * * 1`.
+- `CRON_SCHEDULE_REDIS_MONITOR`: cron schedule of the `redis-montior` job. Defaults to  `*/30 * * * *`.
+- `CRON_SCHEDULE_SUNDAY_REMINDER`: cron schedule of the `sunday-reminder` job. Defaults to `0 9 * * 0`.
+- `CRON_SCHEDULE_WEEKLY_TASKS`: cron schedule of the `weekly-tasks` job. Defaults to  `0 9 * * 1`.
 - `DISABLE_REDIS`: if set to `true` redis cache will be disabled.
 - `DISABLE_SCHEDULER_END_DATE`: if set, all tasks cronjobs will be reenabled from this date.
 - `DISABLE_SCHEDULER_START_DATE`: if set, all the tasks cronjobs will be disabled from this date.
