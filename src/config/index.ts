@@ -55,6 +55,7 @@ const settings = {
   disableSchedulerStartDate: process.env.DISABLE_SCHEDULER_START_DATE
     ? Date.parse(process.env.DISABLE_SCHEDULER_START_DATE)
     : null,
+  enableCronIntegration: process.env.ENABLE_CRON_INTEGRATION?.toLowerCase() === "true",
   enableCacheMonitoring:
     process.env.ENABLE_CACHE_MONITORING?.toLocaleLowerCase() === "true",
   googleSheetsIDs: {
