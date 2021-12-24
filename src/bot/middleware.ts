@@ -7,13 +7,13 @@ export const requireAdmin: Middleware<Context> = async (ctx, next) => {
   const logger: Logger = Container.get("logger");
 
   if (ctx.message) {
-    if (settings.admin_id != ctx.message.chat.id)
+    if (settings.adminID != ctx.message.chat.id)
       return await ctx.reply("No tienes permiso para utilizar este comando.");
   } else if (ctx.callbackQuery) {
     if (!ctx.callbackQuery.from) {
       logger.error("ctx.callbackQuery.from empty");
       logger.error(ctx);
-    } else if (settings.admin_id != ctx.callbackQuery?.from.id)
+    } else if (settings.adminID != ctx.callbackQuery?.from.id)
       return await ctx.reply("No tienes permiso para utilizar este comando.");
   } else {
     logger.warn(ctx);

@@ -9,7 +9,7 @@ import spreadsheetsLoader from "./spreadsheets";
 
 // Loader only for external job calls
 export default async (): Promise<void> => {
-  const token = settings.telegram_token_bot;
+  const token = settings.telegramTokenBot;
   if (token === undefined) throw new Error("BOT_TOKEN must be provided!");
 
   const bot = new Telegraf(token);

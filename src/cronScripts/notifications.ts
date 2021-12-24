@@ -2,6 +2,7 @@ import { scheduleJob } from "node-schedule";
 import { Telegraf } from "telegraf";
 import Container from "typedi";
 import { Logger } from "winston";
+import settings from "../config";
 import GSTasksService from "../services/gsTasks";
 import GSUsersService from "../services/gsUsers";
 import { areTasksCronEnabled } from "../utils/cron";
@@ -64,6 +65,14 @@ export const mondayReminderJob = async (): Promise<void> => {
 };
 
 export default (): void => {
-  scheduleJob("sunday-reminder", "0 9 * * 0", sundayReminderJob);
-  scheduleJob("monday-reminder", "30 8 * * 1", mondayReminderJob);
+  scheduleJob(
+    "sunday-reminder",
+    settings.cronSchedules.sundayReminder,
+    sundayReminderJob
+  );
+  scheduleJob(
+    "monday-reminder",
+    settings.cronSchedules.mondayReminder,
+    mondayReminderJob
+  );
 };

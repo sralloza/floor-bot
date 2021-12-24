@@ -7,7 +7,7 @@ import GSTransactionsService, { Transaction } from "./gsTransactions";
 
 @Service()
 export default class TransferService {
-  sheetID = settings.google_sheets_ids.logs;
+  sheetID = settings.googleSheetsIDs.logs;
 
   constructor(
     @Inject("logger") private logger: Logger,

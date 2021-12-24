@@ -6,8 +6,8 @@ export default async (): Promise<void> => {
   const doc = new GoogleSpreadsheet("1FqHRnOMOPhknpQwxyq6Wh79jO-KV-a-bxCli0LsjKvc");
 
   await doc.useServiceAccountAuth({
-    client_email: settings.client_email,
-    private_key: settings.private_key
+    client_email: settings.clientEmail,
+    private_key: settings.privateKey
   });
 
   await doc.loadInfo();
