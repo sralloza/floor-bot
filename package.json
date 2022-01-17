@@ -1,6 +1,6 @@
 {
    "name": "floor-bot",
-   "version": "1.9.0",
+   "version": "1.9.10",
    "description": "",
    "main": "./build/src/app.js",
    "scripts": {

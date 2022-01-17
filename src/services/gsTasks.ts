@@ -227,10 +227,10 @@ export default class GSTasksService {
 
   public async createWeeklyTasks(notifyUsers = false): Promise<void> {
     const currentTasks = await this.getWeeklyTasks();
-    const users = await this.usersService.getUsers();
-    const usernames = users.map((e) => e.username);
 
     if (!currentTasks.length) {
+      const users = await this.usersService.getUsers();
+      const usernames = users.map((e) => e.username);
       const task: WeeklyTask = {
         week: 1,
         bathrooms: usernames[0],
@@ -244,16 +244,18 @@ export default class GSTasksService {
 
     const lastTask = currentTasks[currentTasks.length - 1];
     const nextWeek = lastTask.week + 1;
+    const usernames = [
+      lastTask.bathrooms.user,
+      lastTask.livingRoom.user,
+      lastTask.kitchen.user
+    ];
 
-    const newUsers = this.arraysService.rotate(
-      usernames,
-      (nextWeek - 1) % users.length
-    );
+    const newUsernames = this.arraysService.rotate(usernames, 1);
     const task: WeeklyTask = {
       week: nextWeek,
-      bathrooms: newUsers[0],
-      livingRoom: newUsers[1],
-      kitchen: newUsers[2]
+      bathrooms: newUsernames[0],
+      livingRoom: newUsernames[1],
+      kitchen: newUsernames[2]
     };
     await this.createWeeklyTask(task);
     if (notifyUsers) await this.notifyUsers(task);
