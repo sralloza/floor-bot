@@ -35,6 +35,7 @@ docker buildx build -t sralloza/floor-bot:$VERSION --platform=linux/arm/v7,linux
 - `ENABLE_CACHE_MONITORING`: if set to `true`, the system will log every 30 minutes the keys stored in the cache.
 - `ENABLE_CRON_INTEGRATION`: if set to `true` it will enable the cron integration, which is disabled by default.
 - `LOG_LEVEL`: winston's log level. Defaults to `silly`.
+- `LATEX2PNG_API_TIMEOUT`: timeout of the latex2png api in seconds. Defaults to `2`.
 - `PORT`: the port where the API will be listening. Defaults to `80`.
 - `REDIS_HOST`: host where redis is listening. Defaults to `localhost`.
 - `REDIS_PORT`: port where redis is listening. Defaults to  `6379`.

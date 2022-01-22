@@ -53,6 +53,11 @@ export default (bot: Telegraf): void => {
     const imageURL = await tasksService.getTasksAsTable();
 
     if (imageURL === null) return await ctx.reply("No hay ninguna tarea activa");
+    if (imageURL === "error") {
+      await ctx.reply("Se ha producido un error generando la imagen");
+      await ctx.reply("Puedes utilizar el excel mientras el servicio esté caído");
+      return;
+    }
 
     try {
       await ctx.replyWithPhoto(imageURL);
