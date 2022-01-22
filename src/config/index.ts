@@ -65,6 +65,7 @@ const settings = {
     tickets: parseInt(process.env.SH_ID_TICKETS),
     logs: parseInt(process.env.SH_ID_LOGS)
   },
+  latex2pngApiTimeout: parseInt(process.env.LATEX2PNG_API_TIMEOUT || "2"),
   logLevel: process.env.LOG_LEVEL || "silly",
   port: parseInt(process.env.PORT || "80"),
   privateKey: (process.env.GOOGLE_PRIVATE_KEY as string).replace(/\\n/gm, "\n"),

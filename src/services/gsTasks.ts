@@ -1,6 +1,4 @@
-import axios from "axios";
 import { GoogleSpreadsheet, GoogleSpreadsheetCell } from "google-spreadsheet";
-import tableToLatex from "make-latex";
 import { Telegraf } from "telegraf";
 import Container, { Inject, Service } from "typedi";
 import { Logger } from "winston";
@@ -8,6 +6,7 @@ import settings from "../config";
 import ArraysService from "./arrays";
 import CellsService from "./cells";
 import GSUsersService from "./gsUsers";
+import Latex2PNGService from "./latex2png";
 import RedisService from "./redis";
 
 export interface WeeklyTask {
@@ -49,12 +48,13 @@ export default class GSTasksService {
   sheetID = settings.googleSheetsIDs.tasks;
 
   constructor(
-    @Inject("logger") private logger: Logger,
     @Inject("doc") private doc: GoogleSpreadsheet,
-    @Inject() private usersService: GSUsersService,
-    @Inject() private cellsService: CellsService,
+    @Inject("logger") private logger: Logger,
     @Inject() private arraysService: ArraysService,
-    @Inject() private redisService: RedisService
+    @Inject() private cellsService: CellsService,
+    @Inject() private latex2pngService: Latex2PNGService,
+    @Inject() private redisService: RedisService,
+    @Inject() private usersService: GSUsersService
   ) {}
 
   public async createWeeklyTask(task: WeeklyTask): Promise<void> {
@@ -291,41 +291,13 @@ export default class GSTasksService {
       await this.redisService.setTasksTableURL("null");
       return null;
     }
-    const latexTable = tableToLatex(translatedTasks);
-    const regex = /\\begin{tabular}{c+}\s([{}\s&\\\-\wñáéíóú*]+)\\end{tabular}/;
-    const match = regex.exec(latexTable);
-    if (!match) throw new Error(`Invalid latex table: ${latexTable}`);
 
-    let filteredTable = `
-    \\begin{tabular}{cccc}
-    \\hline
-    ${match[1]}
-    \\hline
-    \\end{tabular}
-    `;
-    filteredTable = filteredTable
-      .replace("á", "\\'{a}")
-      .replace("é", "\\'{e}")
-      .replace("í", "\\'{i}")
-      .replace("ó", "\\'{o}")
-      .replace("ú", "\\'{u}")
-      .replace("ñ", "\\~{n}");
-
-    const response = await axios.post(
-      "http://latex2png.com/api/convert",
-      {
-        auth: { user: "guest", password: "guest" },
-        latex: filteredTable,
-        resolution: 600,
-        color: "000000"
-      },
-      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-    );
-    if (response.data.url === undefined) {
-      throw new Error("Invalid image generation");
+    const newURL = await this.latex2pngService.genTableImageUrl(translatedTasks);
+    if (newURL == "error") {
+      this.logger.info("Error generating tasks table URL");
+      return "error";
     }
 
-    const newURL = "http://latex2png.com" + response.data.url;
     this.logger.info("Generated tasks table URL: " + newURL);
     await this.redisService.setTasksTableURL(newURL);
     return newURL;

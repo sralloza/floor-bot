@@ -9,6 +9,12 @@ export default async (bot: Telegraf): Promise<void> => {
 
   bot.command("tickets", async (ctx) => {
     const imageURL = await ticketsService.getTicketsAsTable();
+
+    if (imageURL === "error") {
+      await ctx.reply("Se ha producido un error generando la imagen");
+      await ctx.reply("Puedes utilizar el excel mientras el servicio esté caído");
+      return;
+    }
     try {
       await ctx.replyWithPhoto(imageURL);
     } catch (error) {
