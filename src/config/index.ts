@@ -16,6 +16,11 @@ if (!process.env.ADMIN_ID) {
   process.exit(1);
 }
 
+if (!process.env.GOOGLE_SHEET_ID) {
+  console.error("Must set env var GOOGLE_SHEET_ID");
+  process.exit(1);
+}
+
 if (!process.env.SH_ID_USERS) {
   console.error("Must set env var SH_ID_USERS");
   process.exit(1);
@@ -58,6 +63,7 @@ const settings = {
   enableCronIntegration: process.env.ENABLE_CRON_INTEGRATION?.toLowerCase() === "true",
   enableCacheMonitoring:
     process.env.ENABLE_CACHE_MONITORING?.toLocaleLowerCase() === "true",
+  googleSheetID: process.env.GOOGLE_SHEET_ID,
   googleSheetsIDs: {
     users: parseInt(process.env.SH_ID_USERS),
     tasks: parseInt(process.env.SH_ID_TASKS),

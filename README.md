@@ -15,12 +15,13 @@ docker buildx build -t sralloza/floor-bot:$VERSION --platform=linux/arm/v7,linux
 - `ADMIN_ID`: the admin's user telegram ID
 - `GOOGLE_PRIVATE_KEY`: the private key to work with google spreadsheets.
 - `GOOGLE_SERVICE_ACCOUNT_EMAIL`: the service account email to work with google spreadsheets.
-- `SH_ID_LOG`: the log sheet id.
-- `SH_ID_TASKS`: the tasks sheet id.
-- `SH_ID_TICKETS`: the tickets sheet id.
-- `SH_ID_TRANSACTIONS`: the transactions sheet id.
-- `SH_ID_USERS`: the users sheet id.
+- `SH_ID_LOG`: the log sheet ID.
+- `SH_ID_TASKS`: the tasks sheet ID.
+- `SH_ID_TICKETS`: the tickets sheet ID.
+- `SH_ID_TRANSACTIONS`: the transactions sheet ID.
+- `SH_ID_USERS`: the users sheet ID.
 - `TELEGRAM_TOKEN_BOT`: the telegram bot's token.
+- `GOOGLE_SHEET_ID`: google sheet ID.
 
 **Optional**:
 
