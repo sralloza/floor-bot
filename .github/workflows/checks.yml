@@ -24,14 +24,28 @@ jobs:
                 per_page: 100
               });
 
+              const labelsData = await github.issues.listLabelsOnIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+              });
+              const labels = labelsData.data.map(label => label.name)
+              console.log({ labels });
+
               const filenames = response.data.map(e => e.filename)
-              console.log(filenames)
+              console.log({ filenames })
 
               let msg = "Version modified"
               let status = filenames.includes("package.json") ? "success" : "failure"
-              if (status === "failure")
+              let skip = labels.includes("skip-version-check")
+
+              console.log({ msg, status, skip})
+              if (skip === true) {
+                msg = "Skipping version update check"
+                status = "success"
+              } else if (status === "failure") {
                 msg = "You need to update the version in package.json"
-              else {
+              } else {
                 const packagePatch = response.data.filter(e => e.filename === "package.json")[0].patch
                 const updated =
                   packagePatch.match(/\-\s+"version":/) &&
@@ -43,6 +57,7 @@ jobs:
                 }
               }
 
+              console.log({ status, msg })
               await github.repos.createCommitStatus({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
