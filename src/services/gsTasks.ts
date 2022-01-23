@@ -3,6 +3,7 @@ import { Telegraf } from "telegraf";
 import Container, { Inject, Service } from "typedi";
 import { Logger } from "winston";
 import settings from "../config";
+import { AlreadyCompletedTaskError } from "../exceptions";
 import ArraysService from "./arrays";
 import CellsService from "./cells";
 import GSUsersService from "./gsUsers";
@@ -154,8 +155,8 @@ export default class GSTasksService {
 
     if (this.cellsService.getTaskCellBackgroud(cell) === "Green") {
       this.logger.error("Already finished");
-      this.logger.error({ week, username, taskType, cell });
-      throw new Error("Already finised");
+      // this.logger.error({ week, username, taskType, cell });
+      throw new AlreadyCompletedTaskError("Already finised");
     }
     if (cell.value != username) {
       this.logger.error("Cell is not owned by user");
