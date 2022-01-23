@@ -1,6 +1,7 @@
 import { Markup, Telegraf } from "telegraf";
 import Container from "typedi";
 import { Logger } from "winston";
+import { AlreadyCompletedTaskError } from "../exceptions";
 import GSTasksService, { TaskType } from "../services/gsTasks";
 import GSUsersService from "../services/gsUsers";
 import { CANCEL_OPTION } from "./utils";
@@ -40,8 +41,14 @@ export default (bot: Telegraf): void => {
       await tasksService.completeTask(user.username, week, taskType as TaskType);
     } catch (error) {
       await ctx.answerCbQuery();
-      return ctx.editMessageText((error as Error).toString());
+      ctx.editMessageReplyMarkup({ inline_keyboard: [] });
+
+      if (error instanceof AlreadyCompletedTaskError) {
+        return ctx.replyWithMarkdownV2(`La tarea \`${week}-${taskType}\` ya está completada`);
+      }
+      return ctx.reply((error as Error).toString());
     }
+
     await ctx.answerCbQuery();
     ctx.editMessageReplyMarkup({ inline_keyboard: [] });
     ctx.reply("Tarea completada con éxito");
