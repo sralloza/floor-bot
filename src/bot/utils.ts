@@ -44,7 +44,8 @@ export default (bot: Telegraf): void => {
   });
 
   bot.command("version", async (ctx) => {
-    const parsedVersion = version.replace(/\./g, "\\.");
+    let parsedVersion = version.replace(/\./g, "\\.");
+    parsedVersion = parsedVersion.replace(/-/g, "\\-");
     await ctx.replyWithMarkdownV2(`Versión actual: _*v${parsedVersion}*_`);
   });
 
