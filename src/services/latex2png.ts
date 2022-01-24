@@ -8,7 +8,7 @@ import settings from "../config";
 export default class Latex2PNGService {
   constructor(@Inject("logger") private logger: Logger) {}
 
-  public async genTableImageUrl(table: object[]) {
+  public async genTableImageUrl(table: any[]) {
     const latexTable = tableToLatex(table);
     const regex = /\\begin{tabular}{c+}\s([{}\s&\\\-\wñáéíóú*]+)\\end{tabular}/;
     const match = regex.exec(latexTable);
@@ -40,20 +40,20 @@ export default class Latex2PNGService {
         },
         {
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          timeout: settings.latex2pngApiTimeout
+          timeout: settings.latex2pngApiTimeout * 1000
         }
       );
 
       if (response.data.url === undefined) {
         this.logger.error("Invalid image generation");
-        return "error"
+        return "error";
       }
 
       const newURL = "http://latex2png.com" + response.data.url;
       return newURL;
     } catch (err) {
       this.logger.error("HTTP Exception using latex2png API: " + err);
-      return "error"
+      return "error";
     }
   }
 }
