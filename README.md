@@ -41,6 +41,13 @@ docker buildx build -t sralloza/floor-bot:$VERSION --platform=linux/arm/v7,linux
 - `REDIS_HOST`: host where redis is listening. Defaults to `localhost`.
 - `REDIS_PORT`: port where redis is listening. Defaults to  `6379`.
 
+### Upgrade dependencies
+
+```shell
+npx npm-check-updates -u
+npm install
+```
+
 ## Test
 
 First launch redis:
