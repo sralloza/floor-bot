@@ -66,6 +66,7 @@ export default class GSTasksService {
       salón: task.livingRoom,
       cocina: task.kitchen
     };
+
     await sheet.addRow(newRow as any);
     this.logger.info(`Created task: ${JSON.stringify(newRow)}`);
     await this.redisService.delTasks();
@@ -243,15 +244,21 @@ export default class GSTasksService {
       return;
     }
 
+    // New tasks depends on first task
+    // Warning: if first task has duplicates (a user has transferred its task), the algorithm fails
+    
+    const firstTask = currentTasks[0];
     const lastTask = currentTasks[currentTasks.length - 1];
+    const firstWeek = firstTask.week;
     const nextWeek = lastTask.week + 1;
+
     const usernames = [
-      lastTask.bathrooms.user,
-      lastTask.livingRoom.user,
-      lastTask.kitchen.user
+      firstTask.bathrooms.user,
+      firstTask.livingRoom.user,
+      firstTask.kitchen.user
     ];
 
-    const newUsernames = this.arraysService.rotate(usernames, 1);
+    const newUsernames = this.arraysService.rotate(usernames, (nextWeek-firstWeek) % usernames.length);
     const task: WeeklyTask = {
       week: nextWeek,
       bathrooms: newUsernames[0],
