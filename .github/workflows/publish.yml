@@ -1,8 +1,6 @@
 name: publish
 
 on:
-  # XXX: remove push:
-  push:
   release:
     types: [published]
 
@@ -42,5 +40,4 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
-          # XXX: remove 'test' prefix
-          tags: "sralloza/floor-bot-test:${{ steps.project_version.outputs.version }}"
+          tags: "sralloza/floor-bot:${{ steps.project_version.outputs.version }}"
