@@ -4,8 +4,10 @@
 
 ### Docker images
 
+**Note: this are the commands to build the docker image. You shouldn't run this commands. The [publish pipeline](.github/workflows/publish.yml) is in charge of building the docker images automatically.**
+
 ```bash
-docker buildx build -t sralloza/floor-bot:$VERSION --platform=linux/arm/v7,linux/amd64 --push .
+docker buildx build -t sralloza/floor-bot:$VERSION --platform=linux/arm/v7,linux/amd64,linux/arm64 --push .
 ```
 
 ### Environment variables
