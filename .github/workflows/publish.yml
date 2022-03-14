@@ -1,4 +1,4 @@
-name: publish
+name: Publish
 
 on:
   release:
@@ -11,14 +11,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-node@v2
         with:
-          python-version: 3.9
+          node-version: 16.14
 
-      - name: Setup poetry
-        uses: abatilo/actions-poetry@v2.0.0
-        with:
-          poetry-version: 1.1.13
+      - name: Install jq
+        run: sudo apt install jq -y
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -34,7 +32,7 @@ jobs:
 
       - name: Get project version
         id: project_version
-        run: echo "::set-output name=version::$(poetry version -s)"
+        run: echo "::set-output name=version::$(cat package.json | jq -r '.version')"
 
       - name: Build and push
         uses: docker/build-push-action@v2
