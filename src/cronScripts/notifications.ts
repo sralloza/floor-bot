@@ -65,14 +65,24 @@ export const mondayReminderJob = async (): Promise<void> => {
 };
 
 export default (): void => {
-  scheduleJob(
-    "sunday-reminder",
-    settings.cronSchedules.sundayReminder,
-    sundayReminderJob
-  );
-  scheduleJob(
-    "monday-reminder",
-    settings.cronSchedules.mondayReminder,
-    mondayReminderJob
-  );
+  const logger: Logger = Container.get("logger");
+  if (settings.cronSchedules.sundayReminder == "disabled") {
+    logger.info("Disabled sunday reminder cron");
+  } else {
+    scheduleJob(
+      "sunday-reminder",
+      settings.cronSchedules.sundayReminder,
+      sundayReminderJob
+    );
+  }
+
+  if (settings.cronSchedules.mondayReminder == "disabled") {
+    logger.info("Disabled monday reminder cron");
+  } else {
+    scheduleJob(
+      "monday-reminder",
+      settings.cronSchedules.mondayReminder,
+      mondayReminderJob
+    );
+  }
 };
