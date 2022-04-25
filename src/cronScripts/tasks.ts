@@ -1,6 +1,7 @@
 import { scheduleJob } from "node-schedule";
 import Container from "typedi";
-import { Logger } from "winston";
+import { Logger, loggers } from "winston";
+import settings from "../config";
 import GSTasksService from "../services/gsTasks";
 import { areTasksCronEnabled } from "../utils/cron";
 
@@ -18,5 +19,10 @@ export const weeklyTasksJob = async (): Promise<void> => {
 };
 
 export default (): void => {
-  scheduleJob("weekly-tasks", "0 9 * * 1", weeklyTasksJob);
+  if (settings.cronSchedules.weeklyTasks == "disabled") {
+    const logger: Logger = Container.get("logger");
+    logger.info("Disabled weekly tasks cron");
+    return
+  }
+  scheduleJob("weekly-tasks", settings.cronSchedules.weeklyTasks, weeklyTasksJob);
 };

@@ -49,7 +49,6 @@ const settings = {
   clientEmail: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL as string,
   cronSchedules: {
     mondayReminder: process.env.CRON_SCHEDULE_MONDAY_REMINDER || "30 8 * * 1",
-    redisMonitor: process.env.CRON_SCHEDULE_REDIS_MONITOR || "*/30 * * * *",
     sundayReminder: process.env.CRON_SCHEDULE_SUNDAY_REMINDER || "0 9 * * 0",
     weeklyTasks: process.env.CRON_SCHEDULE_WEEKLY_TASKS || "0 9 * * 1"
   },
