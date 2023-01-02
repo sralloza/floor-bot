@@ -1,5 +1,7 @@
 # The Floor Bot
 
+**This project is deprecated and archived, it was split into an [API](https://github.com/sralloza/chore-management-api) and a [bot](https://github.com/sralloza/chore-management-bot).**
+
 ## Deployment
 
 ### Docker images
